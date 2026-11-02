@@ -1,0 +1,26 @@
+INTERLIS 2.4;
+
+MODEL SO_Bevoelkerung_Gemeinde_Alter_20261015 (de) AT "https://geo.so.ch/models/ch.so.bevoelkerung.gemeinde_alter/2026-10-15" VERSION "2026-10-15" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      BFS_Nr : MANDATORY 1 .. 9999;
+      Gemeinde : MANDATORY TEXT*100;
+      Bezirk : MANDATORY TEXT*100;
+      Total : MANDATORY 0 .. 999999;
+      Total_Maennlich : MANDATORY 0 .. 999999;
+      Total_Weiblich : MANDATORY 0 .. 999999;
+      Total_SchweizerInnen : MANDATORY 0 .. 999999;
+      Total_AuslaenderInnen : MANDATORY 0 .. 999999;
+      Alter_0_bis_19 : MANDATORY 0 .. 999999;
+      Alter_20_bis_39 : MANDATORY 0 .. 999999;
+      Alter_40_bis_64 : MANDATORY 0 .. 999999;
+      Alter_65_bis_79 : MANDATORY 0 .. 999999;
+      Alter_80_und_mehr : MANDATORY 0 .. 999999;
+    END Observation;
+    CONSTRAINTS OF SO_Bevoelkerung_Gemeinde_Alter_20261015.Data.Observation =
+      UNIQUE UNIQUE_BFS_Nr: BFS_Nr;
+    END;
+
+  END Data;
+END SO_Bevoelkerung_Gemeinde_Alter_20261015.

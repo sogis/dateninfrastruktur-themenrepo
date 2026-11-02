@@ -1,0 +1,215 @@
+import java.util.Properties
+
+// Dieses Init-Skript richtet die Plugin-Auflösung vor den Organisations-Builds ein.
+// Das flache Offline-Bundle muss schon auf dem Init-Skript-Klassenpfad verfügbar sein,
+// damit die enthaltenen Plugins ohne Zugriff auf externe Repositories geladen werden.
+// Für diesen frühen Bootstrap hat die Umgebungsvariable Vorrang vor der Property.
+def bootstrapOfflineJarsDir = System.getenv('DATENPORTAL_OFFLINE_JARS_DIR')
+if (bootstrapOfflineJarsDir == null || bootstrapOfflineJarsDir.toString().trim().isEmpty()) {
+    bootstrapOfflineJarsDir = gradle.startParameter.projectProperties['datenportalOfflineJarsDir']
+}
+bootstrapOfflineJarsDir = bootstrapOfflineJarsDir == null || bootstrapOfflineJarsDir.toString().trim().isEmpty()
+        ? null
+        : bootstrapOfflineJarsDir.toString().trim()
+
+if (bootstrapOfflineJarsDir != null) {
+    initscript {
+        repositories {
+            flatDir {
+                dirs bootstrapOfflineJarsDir
+            }
+        }
+        dependencies {
+            classpath fileTree(dir: bootstrapOfflineJarsDir, include: '*.jar')
+        }
+    }
+}
+
+// Versionen und Repository-Adressen stammen zentral aus gradle-build.properties.
+// Eine explizite -P-Angabe hat für die Konfigurationsdatei Vorrang vor der Umgebung;
+// ohne Override wird die Datei neben diesem Skript verwendet, unabhängig vom Startort.
+def buildConfigFilePath = gradle.startParameter.projectProperties['datenportalBuildConfigFile']
+if (buildConfigFilePath == null || buildConfigFilePath.toString().trim().isEmpty()) {
+    buildConfigFilePath = System.getenv('DATENPORTAL_BUILD_CONFIG_FILE')
+}
+
+File buildConfigFile = buildConfigFilePath == null || buildConfigFilePath.toString().trim().isEmpty()
+        ? new File(new File(getScriptSource().fileName).parentFile, 'gradle-build.properties')
+        : new File(buildConfigFilePath.toString().trim())
+
+if (!buildConfigFile.isFile()) {
+    throw new GradleException("Build config file not found: ${buildConfigFile}")
+}
+
+def buildConfig = new Properties()
+buildConfigFile.withInputStream { buildConfig.load(it) }
+
+// Die numerischen Suffixe bestimmen die Suchreihenfolge der Repositories. Numerisch
+// sortieren, damit beispielsweise Eintrag 10 nicht vor Eintrag 2 geprüft wird.
+def readIndexedProperties = { Properties props, String prefix ->
+    props.stringPropertyNames()
+            .findAll { it.startsWith(prefix) }
+            .sort { left, right ->
+                Integer.parseInt(left.substring(prefix.length())) <=> Integer.parseInt(right.substring(prefix.length()))
+            }
+            .collect { props.getProperty(it).toString().trim() }
+            .findAll { !it.isEmpty() }
+}
+
+def defaultGretlPluginId = buildConfig.getProperty('datenportal.plugin.gretl.id', 'ch.so.agi.gretl').toString().trim()
+def defaultGretlPluginVersion = buildConfig.getProperty('datenportal.plugin.gretl.version', '5.0.0-SNAPSHOT').toString().trim()
+def defaultDownloadPluginId = buildConfig.getProperty('datenportal.plugin.download.id', 'de.undercouch.download').toString().trim()
+def defaultDownloadPluginVersion = buildConfig.getProperty('datenportal.plugin.download.version', '5.6.0').toString().trim()
+def defaultSshPluginId = buildConfig.getProperty('datenportal.plugin.ssh.id', 'org.hidetake.ssh').toString().trim()
+def defaultSshPluginVersion = buildConfig.getProperty('datenportal.plugin.ssh.version', '2.10.1').toString().trim()
+def projectRepositoryUrls = readIndexedProperties(buildConfig, 'datenportal.repository.project.')
+def pluginRepositoryUrls = readIndexedProperties(buildConfig, 'datenportal.repository.plugin.')
+
+if (projectRepositoryUrls.isEmpty()) {
+    throw new GradleException("No project repositories configured in ${buildConfigFile}.")
+}
+if (pluginRepositoryUrls.isEmpty()) {
+    throw new GradleException("No plugin repositories configured in ${buildConfigFile}.")
+}
+
+// Für die anschliessende Projektauflösung haben explizite Properties Vorrang vor
+// Umgebungsvariablen. Maven-Bundle und flaches JAR-Bundle sind alternative Formen;
+// beide zugleich wären mehrdeutig und werden deshalb unten abgewiesen.
+def offlineRepoDir = gradle.startParameter.projectProperties['datenportalOfflineRepoDir']
+if (offlineRepoDir == null || offlineRepoDir.toString().trim().isEmpty()) {
+    offlineRepoDir = System.getenv('DATENPORTAL_OFFLINE_REPO_DIR')
+}
+offlineRepoDir = offlineRepoDir == null || offlineRepoDir.toString().trim().isEmpty()
+        ? null
+        : offlineRepoDir.toString().trim()
+
+def offlineJarsDir = gradle.startParameter.projectProperties['datenportalOfflineJarsDir']
+if (offlineJarsDir == null || offlineJarsDir.toString().trim().isEmpty()) {
+    offlineJarsDir = System.getenv('DATENPORTAL_OFFLINE_JARS_DIR')
+}
+offlineJarsDir = offlineJarsDir == null || offlineJarsDir.toString().trim().isEmpty()
+        ? null
+        : offlineJarsDir.toString().trim()
+
+if (offlineRepoDir != null && offlineJarsDir != null) {
+    throw new GradleException('Use either DATENPORTAL_OFFLINE_REPO_DIR or DATENPORTAL_OFFLINE_JARS_DIR, not both.')
+}
+
+// Versions-Overrides ermöglichen gezielte Tests eines anderen Pluginstands, ohne
+// die zentrale Datei zu ändern. Die Reihenfolge ist jeweils -P, Umgebung, Default.
+def gretlPluginVersion = gradle.startParameter.projectProperties['gretlPluginVersion']
+if (gretlPluginVersion == null || gretlPluginVersion.toString().trim().isEmpty()) {
+    gretlPluginVersion = System.getenv('GRETL_PLUGIN_VERSION')
+}
+gretlPluginVersion = gretlPluginVersion == null || gretlPluginVersion.toString().trim().isEmpty()
+        ? defaultGretlPluginVersion
+        : gretlPluginVersion.toString().trim()
+
+def downloadPluginVersion = gradle.startParameter.projectProperties['downloadPluginVersion']
+if (downloadPluginVersion == null || downloadPluginVersion.toString().trim().isEmpty()) {
+    downloadPluginVersion = System.getenv('DOWNLOAD_PLUGIN_VERSION')
+}
+downloadPluginVersion = downloadPluginVersion == null || downloadPluginVersion.toString().trim().isEmpty()
+        ? defaultDownloadPluginVersion
+        : downloadPluginVersion.toString().trim()
+
+def sshPluginVersion = gradle.startParameter.projectProperties['sshPluginVersion']
+if (sshPluginVersion == null || sshPluginVersion.toString().trim().isEmpty()) {
+    sshPluginVersion = System.getenv('SSH_PLUGIN_VERSION')
+}
+sshPluginVersion = sshPluginVersion == null || sshPluginVersion.toString().trim().isEmpty()
+        ? defaultSshPluginVersion
+        : sshPluginVersion.toString().trim()
+
+def addMavenRepository = { handler, String repositoryUrl ->
+    handler.maven {
+        url = repositoryUrl
+        if (repositoryUrl.startsWith('http://')) {
+            allowInsecureProtocol = true
+        }
+    }
+}
+
+// Bei einem Offline-Bundle nur dessen Quelle eintragen und dann zurückkehren.
+// Ein unvollständiges Bundle soll auffallen, statt unbemerkt online ergänzt zu werden.
+def addProjectRepositories = { handler ->
+    if (offlineRepoDir != null) {
+        handler.maven {
+            url = new File(offlineRepoDir).toURI()
+        }
+        return
+    }
+
+    if (offlineJarsDir != null) {
+        handler.flatDir {
+            dirs offlineJarsDir
+        }
+        return
+    }
+
+    projectRepositoryUrls.each { repositoryUrl ->
+        addMavenRepository(handler, repositoryUrl)
+    }
+}
+
+settingsEvaluated { settings ->
+    settings.pluginManagement {
+        repositories {
+            if (offlineRepoDir != null) {
+                maven {
+                    url = new File(offlineRepoDir).toURI()
+                }
+            } else if (offlineJarsDir != null) {
+                flatDir {
+                    dirs offlineJarsDir
+                }
+            } else {
+                pluginRepositoryUrls.each { repositoryUrl ->
+                    addMavenRepository(delegate, repositoryUrl)
+                }
+            }
+        }
+        if (offlineJarsDir != null) {
+            // Ein flaches JAR-Verzeichnis enthält keine üblichen Plugin-Marker wie
+            // ein Maven-Repository. Deshalb die bekannten Plugin-IDs ausdrücklich
+            // auf ihre Implementierungsmodule abbilden.
+            resolutionStrategy {
+                eachPlugin {
+                    if (requested.id.id == defaultGretlPluginId) {
+                        useModule("ch.so.agi:gretl-core:${gretlPluginVersion}")
+                    }
+                    if (requested.id.id == defaultDownloadPluginId) {
+                        useModule("de.undercouch:gradle-download-task:${downloadPluginVersion}")
+                    }
+                    if (requested.id.id == defaultSshPluginId) {
+                        useModule("org.hidetake:gradle-ssh-plugin:${sshPluginVersion}")
+                    }
+                }
+            }
+        }
+        plugins {
+            id defaultGretlPluginId version gretlPluginVersion
+            id defaultDownloadPluginId version downloadPluginVersion
+            id defaultSshPluginId version sshPluginVersion
+        }
+    }
+}
+
+// Dieselbe Quellenauswahl gilt für Buildskript- und Projektabhängigkeiten. Beim
+// flachen Bundle werden alle JARs eingebunden, da dort keine Maven-Metadaten zur
+// Auflösung transitiver Abhängigkeiten vorhanden sind.
+allprojects {
+    buildscript {
+        repositories {
+            addProjectRepositories(delegate)
+        }
+        if (offlineJarsDir != null) {
+            dependencies {
+                classpath fileTree(dir: offlineJarsDir, include: '*.jar')
+            }
+        }
+    }
+    repositories {
+        addProjectRepositories(delegate)
+    }
+}

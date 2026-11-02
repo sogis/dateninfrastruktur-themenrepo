@@ -1,0 +1,8 @@
+title: Statistikdienst
+description: Datenportal-Ausführungen des Statistikdiensts.
+
+permissions:
+  read:
+    - team: datenportal-read
+  build:
+    - team: statistikdienst-build

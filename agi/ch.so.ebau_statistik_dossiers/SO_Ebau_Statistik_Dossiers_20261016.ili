@@ -1,0 +1,12 @@
+INTERLIS 2.4;
+
+MODEL SO_Ebau_Statistik_Dossiers_20261016 (de) AT "https://geo.so.ch/models/ch.so.ebau_statistik_dossiers/2026-10-16" VERSION "2026-10-16" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      berichtsmonat : MANDATORY INTERLIS.XMLDate;
+      anzahl_gemeinden_in_ebau : MANDATORY 0 .. 999;
+      anzahl_ueber_ebau_eingereichte_dossiers : MANDATORY 0 .. 99999;
+    END Observation;
+  END Data;
+END SO_Ebau_Statistik_Dossiers_20261016.

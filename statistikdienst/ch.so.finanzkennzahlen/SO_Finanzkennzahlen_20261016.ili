@@ -1,0 +1,15 @@
+INTERLIS 2.4;
+
+MODEL SO_Finanzkennzahlen_20261016 (de) AT "https://models.geo.admin.ch/SO/SO_Finanzkennzahlen_20261016.ili" VERSION "2026-10-16" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      jahr : MANDATORY 2018 .. 2100;
+      kennzahl_id : MANDATORY TEXT*10;
+      kennzahl : MANDATORY TEXT*100;
+      art : MANDATORY TEXT*10;
+      wert : MANDATORY -1000000000 .. 1000000000;
+      einheit : MANDATORY TEXT*20;
+    END Observation;
+  END Data;
+END SO_Finanzkennzahlen_20261016.

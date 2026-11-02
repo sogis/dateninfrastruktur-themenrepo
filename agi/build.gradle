@@ -1,0 +1,14 @@
+plugins {
+    id 'ch.so.agi.gretl'
+}
+
+description = 'Datenportal-Ausführungen des Amts für Geoinformation.'
+
+ext.datenportalOrganization = [
+        id            : 'agi',
+        title         : 'Amt für Geoinformation',
+        label         : 'Amt für Geoinformation',
+        defaultDataset: 'ch.so.av_nachfuehrungsstatistik.personal'
+]
+
+apply from: '../shared/gradle/organisation-common.gradle'

@@ -1,0 +1,104 @@
+= Erwartete Repository-Struktur
+:page-layout: docs
+:toc: macro
+:toclevels: 2
+
+== Grundstruktur
+
+Das Themenrepo besteht aus einem gemeinsamen Bereich `shared/` und je einem Top-Level-Ordner pro Organisation.
+
+[source,text]
+----
+build.gradle                       # administrativ: initializePublication
+shared/
+├── gretl-datenportal-defaults.yaml
+├── gretl-datenportal-teams.yaml
+├── Jenkinsfile
+├── bin/
+│   └── gradlew-java17.sh
+├── gradle/
+│   ├── gradle-build.properties
+│   ├── init.gradle
+│   ├── organisation-common.gradle
+│   └── datenportal-s3.gradle
+└── data/
+    └── offices.xtf
+
+<organisation>/
+├── build.gradle
+├── gretl-datenportal-job.yaml
+├── Jenkinsfile                      # optional
+└── <dataset>/
+    ├── <datenblatt>.xtf             # genau eine .xtf- oder .xml-Datei
+    └── dataset.gradle               # optional
+----
+
+== Gemeinsamer Bereich `shared/`
+
+Der Ordner `shared/` enthält repo-weite Vorgaben und gemeinsame Build-Logik.
+
+[cols="1,3",options="header"]
+|===
+| Datei oder Ordner | Bedeutung
+
+| `shared/gretl-datenportal-defaults.yaml`
+| Optionale repo-weite Defaults, zum Beispiel `gradleTask`, `timeoutMinutes` und Notifications.
+
+| `shared/gretl-datenportal-teams.yaml`
+| Zentrale Zuordnung von Jenkins-Benutzer-IDs zu Teams für Organisations- und Seeder-ACLs.
+
+| `shared/Jenkinsfile`
+| Gemeinsames Default-Pipeline-Skript für Organisationen ohne eigenes Jenkinsfile.
+
+| `shared/bin/gradlew-java17.sh`
+| Java-17-Wrapper für Jenkins-Läufe. Er startet den Gradle Wrapper mit der von Jenkins gesetzten Java-17-Laufzeit.
+
+| `shared/gradle/init.gradle`
+| Zentrale Gradle-Initialisierung für Plugin- und Dependency-Repositories sowie Online-/Offline-Auflösung.
+
+| `shared/gradle/organisation-common.gradle`
+| Gemeinsame Build-Logik für alle Organisationen. Sie liest Jenkins-/Gradle-Parameter, erkennt Datensätze über ihre `.xtf`-/`.xml`-Metadaten und bindet optional die `dataset.gradle`-Datei des ausgewählten Datensatzes ein.
+
+| `shared/gradle/datenportal-s3.gradle`
+| Zentrale S3-Properties und Hilfsfunktionen für GRETL-S3-Upload-Tasks. Die Datei wird automatisch durch `organisation-common.gradle` eingebunden.
+
+| `shared/gradle/gradle-build.properties`
+| Source of Truth für Plugin-Versionen, Repository-URLs und Offline-Seed-Koordinaten.
+
+| `shared/publication.properties`
+| Fachliche Katalogdefaults und URI-Mappings; siehe xref:lieferverarbeitung.adoc[Publikationsvertrag].
+
+| `shared/gradle/datenportal-publication*.gradle`, `shared/sql/`
+| GRETL-Taskkette und SQL-Verarbeitung für Gesamt-XTF, Lieferung und Publikation.
+
+| `shared/data/`
+| Gemeinsame Referenzdaten, zum Beispiel `offices.xtf`.
+|===
+
+== Organisationsordner
+
+Ein Top-Level-Ordner ist nur dann eine Organisation, wenn er eine gültige `gretl-datenportal-job.yaml` enthält. Technische Top-Level-Ordner werden ignoriert, solange sie nicht wie unvollständige Organisationsordner aussehen.
+
+[source,text]
+----
+agi/
+├── build.gradle
+├── gretl-datenportal-job.yaml
+├── Jenkinsfile                         # optional
+└── ch.so.agi.beispiel/
+    ├── ch.so.umwelt.beispiel.xtf
+    └── dataset.gradle                  # optional
+----
+
+== Datensatzordner
+
+Ein Unterordner einer Organisation gilt als Datensatz, wenn er genau eine Datenblattdatei (= Metadaten zum Datensatz) mit Endung `.xtf` oder `.xml` enthält. Der Dateiname ist frei wählbar, zum Beispiel `datenblatt.xml`. Entscheidend ist, dass das Element `identifier` im Inhalt der Datenblattdatei dem Namen des Datensatzordners entspricht. Mehrere `.xtf`- oder `.xml`-Dateien sind nicht erlaubt.
+
+[source,text]
+----
+<organisation>/
+  <dataset-id>/
+    <dateiname>.xtf
+----
+
+Ordnernamen, die wie Datensatz-IDs aussehen, aber keine passende Datenblattdatei enthalten, sind Validierungsfehler. Andere technische Unterordner werden ignoriert.

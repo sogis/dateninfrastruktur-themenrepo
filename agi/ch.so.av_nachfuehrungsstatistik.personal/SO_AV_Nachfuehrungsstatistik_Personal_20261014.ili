@@ -1,0 +1,12 @@
+INTERLIS 2.4;
+
+MODEL SO_AV_Nachfuehrungsstatistik_Personal_20261014 (de) AT "https://geo.so.ch/models/ch.so.av_nachfuehrungsstatistik.personal/2026-10-14" VERSION "2026-10-14" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      jahr : MANDATORY 1980 .. 2100;
+      ausbildung : MANDATORY TEXT*100;
+      anzahl_mitarbeitende : MANDATORY 0 .. 9999;
+    END Observation;
+  END Data;
+END SO_AV_Nachfuehrungsstatistik_Personal_20261014.

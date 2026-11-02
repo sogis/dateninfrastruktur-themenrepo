@@ -1,0 +1,8 @@
+title: Bundesamt für Statistik
+description: Datenportal-Ausführungen des BFS.
+
+permissions:
+  read:
+    - team: datenportal-read
+  build:
+    - team: statistikdienst-build

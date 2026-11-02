@@ -1,0 +1,22 @@
+INTERLIS 2.4;
+
+MODEL SO_GWS_Gebaeude_Heizung_20261016 (de) AT "https://models.geo.admin.ch/SO/SO_GWS_Gebaeude_Heizung_20261016.ili" VERSION "2026-10-16" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      jahr : MANDATORY 1900 .. 2100;
+      bfs_gemeinde_nr : MANDATORY 1 .. 9999;
+      gemeinde : MANDATORY TEXT*100;
+      bfs_bezirk_nr : MANDATORY 1 .. 9999;
+      bezirk : MANDATORY TEXT*100;
+      gebaeude_total : MANDATORY 0 .. 999999;
+      geb_hz_waermepumpe : MANDATORY 0 .. 999999;
+      geb_hz_heizoel : MANDATORY 0 .. 999999;
+      geb_hz_gas : MANDATORY 0 .. 999999;
+      geb_hz_holz : MANDATORY 0 .. 999999;
+      geb_hz_elektrizitaet : MANDATORY 0 .. 999999;
+      geb_hz_fernwaerme : MANDATORY 0 .. 999999;
+      geb_hz_andere_unbekannt : MANDATORY 0 .. 999999;
+    END Observation;
+  END Data;
+END SO_GWS_Gebaeude_Heizung_20261016.

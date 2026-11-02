@@ -1,0 +1,49 @@
+= Shared Defaults
+:page-layout: docs
+:toc: macro
+:toclevels: 2
+
+ifndef::themenrepo-gesamtdokument[]
+toc::[]
+endif::[]
+
+== Zweck
+
+`shared/gretl-datenportal-defaults.yaml` enthält repo-weite Defaults für mehrere Organisationen. Diese Defaults reduzieren Wiederholung in den einzelnen `gretl-datenportal-job.yaml`-Dateien.
+
+Typische Werte sind:
+
+* `execution.gradleTask`;
+* `execution.timeoutMinutes`;
+* `execution.jenkinsfile`;
+* Benachrichtigungs-Defaults.
+
+== Vorrangregel
+
+Organisationen können Shared Defaults überschreiben. Die effektive Logik ist:
+
+. Wert aus `gretl-datenportal-job.yaml`;
+. sonst Wert aus `shared/gretl-datenportal-defaults.yaml`;
+. sonst eingebauter Fallback des Plugins.
+
+Für `execution.gradleTask` ist der eingebaute Fallback `publishToDatenportal`. Für `execution.timeoutMinutes` ist der eingebaute Fallback `60`.
+
+== Beispiel
+
+[source,yaml]
+----
+execution:
+  gradleTask: publishToDatenportal
+  timeoutMinutes: 60
+  jenkinsfile: shared/Jenkinsfile
+
+notifications:
+  email:
+    enabled: true
+    recipients:
+      - datenportal@example.org
+----
+
+== Notifications
+
+Wenn eine Organisation keine eigenen `notifications` definiert, deaktiviert sie damit nicht automatisch die Shared Notifications. Es bedeutet nur, dass keine organisationsspezifische Überschreibung vorliegt.

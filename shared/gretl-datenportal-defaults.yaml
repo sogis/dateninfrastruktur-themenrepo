@@ -1,0 +1,7 @@
+execution:
+  gradleTask: publishToDatenportal
+  timeoutMinutes: 60
+
+notifications:
+  email:
+    mode: disabled

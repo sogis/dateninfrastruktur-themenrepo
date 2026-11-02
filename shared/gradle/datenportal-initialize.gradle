@@ -1,0 +1,55 @@
+// Auch dieses angewendete Skript braucht die bereits aufgelösten Taskklassen des
+// Projekts auf seinem eigenen Skript-Klassenpfad, ohne neue Versionen aufzulösen.
+buildscript { dependencies { classpath files(project.buildscript.configurations.classpath) } }
+import ch.so.agi.gretl.tasks.Ili2duckdbImport
+import ch.so.agi.gretl.tasks.IliValidator
+
+// Nur der administrative Erstaufbau liest alle Repository-Datenblätter: Es gibt
+// noch keine angenommene Sammlung. Normale Lieferungen laden diese dagegen aus S3
+// und bearbeiten nur das ausgewählte Thema. Die Verzeichnisauswahl folgt deshalb
+// gezielt Organisation/Thema/Datei und berücksichtigt nur konfigurierte Organisationen.
+def root=project.ext.publicationRoot
+def work=project.ext.publicationWorkDir
+def models=System.getenv('DATENPORTAL_MODELS_DIR') ?: new File(root,'shared/models').path
+def sheets=fileTree(root) { include '*/*/*' }.filter { f ->
+    f.name.toLowerCase() ==~ /.*\.(xtf|xml)$/ && f.parentFile.name.contains('.') &&
+    f.parentFile.name ==~ /^[A-Za-z0-9][A-Za-z0-9_.-]*$/ &&
+    new File(f.parentFile.parentFile,'gretl-datenportal-job.yaml').isFile()
+}
+// Dateisysteme liefern keine verlässliche Reihenfolge. Nach relativem Pfad sortieren,
+// damit Importreihenfolge und interne Zuordnungen bei gleichem Bestand stabil sind.
+// Der Provider wertet den lokalen Dateibaum erst bei Bedarf im Taskablauf aus.
+def orderedSheets=providers.provider { sheets.files.sort { root.toPath().relativize(it.toPath()).toString() } }
+tasks.register('collectInitialSheets') {
+    dependsOn 'preparePublicationWorkspace'
+    doLast {
+        // Ein FileTree allein würde leere Themenordner still übergehen und mehrere
+        // XTF eines Themas gemeinsam importieren. Beides verletzt den Repository-Vertrag;
+        // deshalb vor der Modellvalidierung genau eine Definitionsdatei je Thema fordern.
+        root.eachDir { org ->
+            if (new File(org,'gretl-datenportal-job.yaml').isFile()) org.eachDir { topic ->
+                if (topic.name.contains('.') && topic.name ==~ /^[A-Za-z0-9][A-Za-z0-9_.-]*$/ &&
+                    sheets.files.count { it.parentFile==topic }!=1)
+                    throw new GradleException("Expected one datasheet in ${topic}")
+            }
+        }
+        if (sheets.isEmpty()) throw new GradleException('No repository datasheets for initialization.')
+        project.ext.publicationReport.sourceFiles=orderedSheets.get().collect { root.toPath().relativize(it.toPath()).toString() }
+    }
+}
+tasks.register('validateInitialSheets', IliValidator) {
+    dependsOn 'collectInitialSheets'; dataFiles orderedSheets
+    modelDirectories models; logFile new File(work,'validateInitialSheets.log')
+}
+tasks.register('importInitialSheets', Ili2duckdbImport) {
+    dependsOn 'importPreviousSheets','validateInitialSheets'
+    databaseFile new File(work,'publication.duckdb'); modelDirectories models
+    getOutputs().upToDateWhen { false }
+    schema 'repository'; modelNames 'SO_AGI_DataCatalog_Datasheet_20260523'
+    transferFiles orderedSheets
+    // Mehrere Themen dürfen ihre Datei gleich nennen, etwa datenblatt.xtf. Für ili2db
+    // braucht jeder Import trotzdem einen eigenen technischen Datasetnamen. Die Namen
+    // sheet_N entstehen aus der sortierten Liste und sind keine fachlichen Kennungen;
+    // diese bleiben im XTF erhalten und werden anschliessend von SQL ausgewertet.
+    getDatasetNames().set(orderedSheets.map { files -> (0..<files.size()).collect { "sheet_${it}".toString() } })
+}

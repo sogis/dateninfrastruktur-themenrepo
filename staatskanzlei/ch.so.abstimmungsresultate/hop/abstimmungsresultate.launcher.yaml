@@ -1,0 +1,19 @@
+schemaVersion: 1
+title: Abstimmungsresultate – eCH-0252
+description: >-
+  eCH-0252-v1-XML prüfen und eidgenössische sowie kantonale Abstimmungen als CSV
+  mit einer Zeile pro Geschäftskomponente und Gemeinde aufbereiten.
+  Reine Gemeindeabstimmungen werden ausgefiltert. Stichfragen erhalten eigene Stimmenfelder.
+  Nach erfolgreicher Prüfung wird abstimmungsresultate_<Abstimmungstag>.csv
+  im Ausgabeordner ersetzt.
+outputDirectoryParameter: OUTPUT_DIR
+parameters:
+  INPUT_XML:
+    label: eCH-0252-v1-XML
+    type: file
+    required: true
+    extensions: [xml]
+  OUTPUT_DIR:
+    label: Ausgabeordner
+    type: directory
+    required: true

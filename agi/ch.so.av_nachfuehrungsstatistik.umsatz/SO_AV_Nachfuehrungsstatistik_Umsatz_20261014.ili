@@ -1,0 +1,11 @@
+INTERLIS 2.4;
+
+MODEL SO_AV_Nachfuehrungsstatistik_Umsatz_20261014 (de) AT "https://geo.so.ch/models/ch.so.av_nachfuehrungsstatistik.umsatz/2026-10-14" VERSION "2026-10-14" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      jahr : MANDATORY 1983 .. 2100;
+      umsatz : MANDATORY 0.01 .. 99999999.99;
+    END Observation;
+  END Data;
+END SO_AV_Nachfuehrungsstatistik_Umsatz_20261014.

@@ -1,0 +1,21 @@
+INTERLIS 2.4;
+
+MODEL SO_GWS_Wohnungen_Zimmer_20261016 (de) AT "https://geo.so.ch/models/SO_GWS_Wohnungen_Zimmer_20261016.ili" VERSION "2026-10-16" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      jahr : MANDATORY 1900 .. 2100;
+      bfs_gemeinde_nr : MANDATORY 1 .. 9999;
+      gemeinde : MANDATORY TEXT*100;
+      bfs_bezirk_nr : MANDATORY 1 .. 9999;
+      bezirk : MANDATORY TEXT*100;
+      wohnungen_total : MANDATORY 0 .. 999999;
+      wohnungen_in_efh : MANDATORY 0 .. 999999;
+      wohnungen_1_zimmer : MANDATORY 0 .. 999999;
+      wohnungen_2_zimmer : MANDATORY 0 .. 999999;
+      wohnungen_3_zimmer : MANDATORY 0 .. 999999;
+      wohnungen_4_zimmer : MANDATORY 0 .. 999999;
+      wohnungen_5plus_zimmer : MANDATORY 0 .. 999999;
+    END Observation;
+  END Data;
+END SO_GWS_Wohnungen_Zimmer_20261016.

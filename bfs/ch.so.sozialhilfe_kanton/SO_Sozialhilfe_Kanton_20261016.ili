@@ -1,0 +1,17 @@
+INTERLIS 2.4;
+
+MODEL SO_Sozialhilfe_Kanton_20261016 (de) AT "https://geo.so.ch/models/SO_Sozialhilfe_Kanton_20261016.ili" VERSION "2026-10-16" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      jahr : MANDATORY 1900 .. 2100;
+      raum_code : MANDATORY TEXT*2;
+      raum : MANDATORY TEXT*100;
+      sozialhilfequote_prozent : MANDATORY 0.0 .. 100.0;
+      sozialhilfebeziehende : MANDATORY 0 .. 9999999;
+      unterstuetzungseinheiten : MANDATORY 0 .. 9999999;
+      personen_pro_ue : MANDATORY 0.00 .. 100.00;
+      hinweis : TEXT*255;
+    END Observation;
+  END Data;
+END SO_Sozialhilfe_Kanton_20261016.

@@ -1,0 +1,25 @@
+INTERLIS 2.4;
+
+MODEL SO_Bevoelkerungsprognose_20261016 (de) AT "https://geo.so.ch/models/statistikdienst/ch.so.bevoelkerungsprognose/SO_Bevoelkerungsprognose_20261016" VERSION "2026-10-16" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      gemeindecode : MANDATORY TEXT*10;
+      gemeindename : MANDATORY TEXT*60;
+      bezirkcode : MANDATORY TEXT*10;
+      bezirkname : MANDATORY TEXT*60;
+      ms_regioncode : MANDATORY TEXT*10;
+      ms_regionname : MANDATORY TEXT*60;
+      handlungsraum : MANDATORY TEXT*40;
+      agglomeration : MANDATORY TEXT*60;
+      jahr : MANDATORY 2022 .. 2050;
+      szenario : MANDATORY TEXT*20;
+      bevoelkerung_untergrenze : MANDATORY 0 .. 999999;
+      bevoelkerung_obergrenze : MANDATORY 0 .. 999999;
+    END Observation;
+    CONSTRAINTS OF SO_Bevoelkerungsprognose_20261016.Data.Observation =
+      UNIQUE UniqueGemeindeJahrSzenario: gemeindecode, jahr, szenario;
+    END;
+
+  END Data;
+END SO_Bevoelkerungsprognose_20261016.

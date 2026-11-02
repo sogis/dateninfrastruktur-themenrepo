@@ -1,0 +1,67 @@
+= Lokaler Ablauf zum Integrieren und Testen
+:page-layout: docs
+
+== Umgebung und Zuständigkeit
+
+Für die vollständige lokale Integration mit Garage, Jenkins und Editor gilt die
+link:https://codeberg.org/edigonzales/datenportal-dev-stack/src/branch/main/docs/biblios/inbetriebnahme.adoc[Dev-Stack-Inbetriebnahme].
+Sie enthält den administrativen Erstaufbau in einer beschreibbaren Kopie im
+Jenkins-Volume, Portalanschluss, Lieferfolgen und Fehlerdiagnose. Quellmount und
+Seeder-Snapshot dürfen nicht als Gradle-Buildverzeichnis verwendet werden.
+
+Der separate Shellstart von Jenkins bleibt unter
+link:https://codeberg.org/edigonzales/datenportal-jenkins-dev/src/branch/main/docs/biblios/entwicklung/lokaler-jenkins-start.adoc[Jenkins lokal starten]
+beschrieben. Dort lässt sich `THEMEN_REPO_MODE` wählen; Compose verwendet normalerweise
+`working-tree`; die Registry-Variante verwendet `managed-git`. Java-/Offline- und ENV-Einstellungen stehen in der
+link:https://codeberg.org/edigonzales/datenportal-jenkins-dev/src/branch/main/docs/biblios/entwicklung/referenz-konfiguration.adoc[Jenkins-Referenz].
+
+== Änderung bis zur angenommenen Veröffentlichung
+
+. Organisation/Thema nach xref:organisationen.adoc[Organisationsvertrag] und xref:datensaetze.adoc[Datensatzvertrag] bearbeiten.
+. Im `working-tree`-Modus Arbeitsbaum speichern, im `managed-git`-Modus Änderungen auf dem konfigurierten Remote-Branch bereitstellen.
+. `gretl-datenportal-seed` erfolgreich ausführen; Organisation, Datensatzliste und generierte Parameter prüfen.
+. Der normale Dev-Stack-Start erledigt Seed und die allererste lokale Publikation automatisch. Für bewusste Migration oder abweichende Ziele den dokumentierten administrativen Root-Aufbau verwenden. Keine erneute Initialisierung bei vorhandenem Manifest.
+. Im Formular «Lieferung verarbeiten» mit CSV und/oder Metadaten oder «Datenblatt aus Repository übernehmen» ohne Upload wählen.
+. Build-Artefakte, Bericht und bei Publikation den S3-Verweis prüfen. Optional den Portal-Reload anfordern und dessen Ergebnis separat prüfen.
+
+Der Seeder aktualisiert Repository-Snapshot und Jobdefinitionen. Er publiziert
+keine Metadaten. Ein geändertes Repository-Datenblatt wird durch den gezielten
+Repository-Abgleich in die Gesamtdateien übernommen. Nur bei CSV für eine Serie
+ist «Ausgabe» erforderlich; andere Metadatenläufe beziehen sich auf das ganze Thema.
+
+== Direkte Gradle-Vorschau
+
+Aus einem beschreibbaren Themenrepo-Checkout mit Java 17 und eingerichteter
+Abhängigkeitsauflösung, Organisation und Datensatz passend wählen:
+
+[source,bash]
+----
+./shared/bin/gradlew-java17.sh --no-daemon \
+  -I "$PWD/shared/gradle/init.gradle" -p agi preparePublication \
+  -Pdataset=ch.so.av_nachfuehrungsstatistik.personal \
+  -PpublicationMode=repository-metadata \
+  -PpublicationManifestUrl=http://localhost:8081/ch.so.daten/current.json \
+  -Ps3Publish=false
+----
+
+`GRADLE_JAVA_HOME_17` muss auf Java 17 zeigen. Der HTTP-Aufruf verwendet kein
+`--offline`; lokale Bundle-Abhängigkeiten sind trotzdem nutzbar. Im Container
+statt der Hostadresse die interne Downloads-Adresse verwenden.
+
+`preparePublication` ist stets rein vorbereitend. `publishToDatenportal` erlaubt
+bei `s3Publish=true` zusätzlich S3-Übernahme und gegebenenfalls Git/Reload.
+Im Dev-Stack ist S3 standardmässig freigegeben; `working-tree` verhindert
+weiterhin Git-Schreiben. Eine Vorschau führt ihre Kandidaten nicht als nächsten
+Eingang weiter. Ein publizierender Lauf verwendet beim nächsten Mal den neuen
+S3-Gesamtstand, ohne Quellrepo oder Seeder-Snapshot zu ändern.
+
+== Ergebnisse und Grenzen
+
+Die fachlichen Regeln, Datumswerte, unbekannten Ausgaben, Freigaben, Diffs und
+Fehlerzustände sind in xref:lieferverarbeitung.adoc[Lieferverarbeitung] beschrieben.
+Bei weiteren Repository-Änderungen erneut seeden. Fehlendes Manifest ist kein
+stiller Erststart; ID- und Typänderungen sind manuelle Migrationen.
+
+Git schreibt bei zusätzlicher Freigabe ausschliesslich das ausgewählte
+Datenblatt, vor dem Umschalten von `current.json`. CSV/XLSX/Parquet besitzen
+feste Namen; ein alter Manifestverweis allein stellt alte Daten nicht wieder her.

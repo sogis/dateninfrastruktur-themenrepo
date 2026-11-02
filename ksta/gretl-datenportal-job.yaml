@@ -1,0 +1,8 @@
+title: Kantonales Steueramt
+description: Datenportal-Ausführungen des kantonalen Steueramtes.
+
+permissions:
+  read:
+    - team: datenportal-read
+  build:
+    - team: ksta-build

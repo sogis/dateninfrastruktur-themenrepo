@@ -1,0 +1,19 @@
+INTERLIS 2.4;
+
+MODEL SO_GWS_GebaeudeKategorie_20261016 (de) AT "https://models.geo.admin.ch/SO/SO_GWS_GebaeudeKategorie_20261016.ili" VERSION "2026-10-16" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      jahr : MANDATORY 1900 .. 2100;
+      bfs_gemeinde_nr : MANDATORY 1000 .. 9999;
+      gemeinde : MANDATORY TEXT*100;
+      bfs_bezirk_nr : MANDATORY 1000 .. 9999;
+      bezirk : MANDATORY TEXT*100;
+      gebaeude_total : MANDATORY 0 .. 99999;
+      geb_kat_efh : MANDATORY 0 .. 99999;
+      geb_kat_mfh : MANDATORY 0 .. 99999;
+      geb_kat_wohn_nebennutzung : MANDATORY 0 .. 99999;
+      geb_kat_teilw_wohnnutzung : MANDATORY 0 .. 99999;
+    END Observation;
+  END Data;
+END SO_GWS_GebaeudeKategorie_20261016.

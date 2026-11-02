@@ -1,0 +1,5 @@
+schemaVersion: 1
+applications:
+  - id: staatskanzlei.abstimmungsresultate
+    entrypoint: staatskanzlei/abstimmungsresultate/hop/abstimmungsresultate.hpl
+    sidecar: staatskanzlei/abstimmungsresultate/hop/abstimmungsresultate.launcher.yaml

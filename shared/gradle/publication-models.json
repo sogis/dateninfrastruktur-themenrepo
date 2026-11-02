@@ -1,0 +1,20 @@
+{
+  "revision": "2bd8046b03ea04d202056b05c62fa953e3ddfff5",
+  "models": [
+    {
+      "file": "SO_AGI_DataCatalog_Base_20260529.ili",
+      "url": "https://raw.githubusercontent.com/sogis/sogis-interlis-repository/2bd8046b03ea04d202056b05c62fa953e3ddfff5/models/AGI/SO_AGI_DataCatalog_Base_20260529.ili",
+      "sha256": "fbb1bccc0e84795284f9fb1a3c0be9e6db516c3c4b8ae43ad2f856cf70948431"
+    },
+    {
+      "file": "SO_AGI_DataCatalog_Datasheet_20260523.ili",
+      "url": "https://raw.githubusercontent.com/sogis/sogis-interlis-repository/2bd8046b03ea04d202056b05c62fa953e3ddfff5/models/AGI/SO_AGI_DataCatalog_Datasheet_20260523.ili",
+      "sha256": "367865c820e5c48bc65bc80bf99702aa9b6e8645903c66c8d85b90a17bdfd8a0"
+    },
+    {
+      "file": "SO_AGI_DataCatalog_PublishedCatalog_20260602.ili",
+      "url": "https://raw.githubusercontent.com/sogis/sogis-interlis-repository/2bd8046b03ea04d202056b05c62fa953e3ddfff5/models/AGI/SO_AGI_DataCatalog_PublishedCatalog_20260602.ili",
+      "sha256": "aec7c2e7be899da3d6f003d5e25e28af1c4f49dc272335d813c926453084e452"
+    }
+  ]
+}

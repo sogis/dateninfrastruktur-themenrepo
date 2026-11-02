@@ -1,0 +1,18 @@
+INTERLIS 2.4;
+
+MODEL SO_Sozialhilfe_Merkmale_20261016 (de) AT "https://geo.so.ch/models/SO/SO_Sozialhilfe_Merkmale_20261016.ili" VERSION "2026-10-16" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      jahr : MANDATORY 2000 .. 2100;
+      raum_code : MANDATORY TEXT*10;
+      raum : MANDATORY TEXT*100;
+      geschlecht : MANDATORY TEXT*50;
+      altersklasse : MANDATORY TEXT*50;
+      zivilstand : MANDATORY TEXT*50;
+      staatsangehoerigkeit : MANDATORY TEXT*50;
+      sozialhilfebeziehende : 0 .. 999999;
+      sozialhilfequote_prozent : 0.0 .. 100.0;
+    END Observation;
+  END Data;
+END SO_Sozialhilfe_Merkmale_20261016.

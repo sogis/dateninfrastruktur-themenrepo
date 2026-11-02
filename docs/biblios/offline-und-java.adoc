@@ -1,0 +1,98 @@
+= Offline-Bundle und Java-Laufzeiten
+:page-layout: docs
+:toc: macro
+:toclevels: 2
+
+ifndef::themenrepo-gesamtdokument[]
+toc::[]
+endif::[]
+
+== Abgrenzung
+
+Das Offline-Bundle wird nicht im Themenrepo gebaut. Zuständig ist das Repository `datenportal-jenkins-dev`.
+
+Das Themenrepo muss aber so aufgebaut sein, dass der vorbereitete Offline-Vertrag funktioniert. In der Regel verwenden wir sowohl in der Produktion wie auch zum lokalen Entwickeln ein Dockerimage mit dem Offline-Bundle, damit sichergestellt wird, dass die gleiche GRETL-Version verwendet wird und dass nicht zur Laufzeit Dependencies im Internet heruntergeladen werden müssen.
+
+Beim Bundle- oder Image-Bau ist dieses Repository die Build-Quelle. Zur
+Jenkins-Laufzeit wird die Repository-Quelle separat konfiguriert: produktiv als
+committed `THEMEN_REPO_URL`/`THEMEN_REPO_BRANCH`, lokal optional als
+`THEMEN_REPO_PATH` im `working-tree`-Modus. Das ändert den fachlichen Vertrag
+nicht und verschiebt keine Jenkins- oder Docker-Konfiguration hierher.
+
+== Bestandteile des Offline-Bundles
+
+Zum Offline-Bundle gehören insbesondere:
+
+[cols="1,3",options="header"]
+|===
+| Bestandteil | Zweck
+
+| `gradle-user-home`
+| Enthält die Gradle-Distribution und Wrapper-Caches, die vom Themenrepo-Wrapper benötigt werden.
+
+| `jars`
+| Enthält die offline vorbereiteten Plugin- und Runtime-Jars.
+
+| `models`
+| Enthält die reproduzierbar vorbereiteten INTERLIS-Modelle samt Abhängigkeiten. Zur Laufzeit über `DATENPORTAL_MODELS_DIR` bereitgestellt.
+|===
+
+Zur Laufzeit werden dafür typischerweise diese Umgebungsvariablen gesetzt:
+
+[source,bash]
+----
+GRADLE_USER_HOME=/pfad/zum/offline-bundle/gradle-user-home
+DATENPORTAL_OFFLINE_JARS_DIR=/pfad/zum/offline-bundle/jars
+----
+
+Die DuckDB-Extensions werden passend zur Laufzeit separat installiert:
+beim Image-Build für Linux, beim Shellstart für den Host. Pfade, Defaults und
+Installation beschreibt die
+link:https://codeberg.org/edigonzales/datenportal-jenkins-dev/src/branch/main/docs/biblios/entwicklung/referenz-konfiguration.adoc[Jenkins-Referenz].
+HTTP-Downloads des Publikationsjobs benötigen einen Aufruf ohne `--offline`;
+die lokale Abhängigkeitsauflösung bleibt erhalten. Echte Offline-Lieferprüfungen
+verwenden lokale Manifest-/XTF-Fixtures im isolierten Image-Test.
+
+== Java 21 und Java 17
+
+Die lokale Jenkins-Umgebung trennt die Java-Laufzeiten bewusst:
+
+[cols="1,2",options="header"]
+|===
+| Laufzeit | Verwendung
+
+| Java 21
+| Jenkins-Controller und Jenkins-Plugin-Build.
+
+| Java 17
+| GRETL, Gradle-Builds im Themenrepo und Offline-Bundle.
+|===
+
+Jenkins setzt dafür `GRADLE_JAVA_HOME_17`. Die generierten Jobs starten den Gradle Wrapper über `shared/bin/gradlew-java17.sh`.
+
+== Ablauf in Jenkins
+
+Der Laufzeitvertrag sieht vereinfacht so aus:
+
+. Jenkins checkt das Themenrepo aus.
+. `shared/Jenkinsfile` wechselt in den Repo-Root.
+. Die Pipeline startet `shared/bin/gradlew-java17.sh`.
+. Der Wrapper setzt `JAVA_HOME` aus `GRADLE_JAVA_HOME_17`.
+. `./gradlew` liest `gradle/wrapper/gradle-wrapper.properties`.
+. Die Gradle-Distribution wird unter `GRADLE_USER_HOME/wrapper/dists` gesucht.
+. `shared/gradle/init.gradle` bindet `DATENPORTAL_OFFLINE_JARS_DIR` ein.
+
+== Lokaler Offline-Test
+
+[source,bash]
+----
+cd ../datenportal-jenkins-dev
+./bin/build-offline-bundle.sh
+
+cd ../datenportal-themenrepo
+GRADLE_USER_HOME="../datenportal-jenkins-dev/build/offline-bundle/gradle-user-home" \
+DATENPORTAL_OFFLINE_JARS_DIR="../datenportal-jenkins-dev/build/offline-bundle/jars" \
+./gradlew --offline -I "$PWD/shared/gradle/init.gradle" -p agi tasks
+----
+
+Für harte Airgap-Tests genügt `--offline` allein nicht. Zusätzlich muss der Container oder Prozess ohne Netzwerkzugang laufen.

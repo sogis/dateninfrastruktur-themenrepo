@@ -1,0 +1,17 @@
+INTERLIS 2.4;
+
+MODEL SO_Steuerfuss_Gemeinden_20261016 (de) AT "https://models.so.ch/SO_Steuerfuss_Gemeinden_20261016" VERSION "2026-10-16" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      gemeinde : MANDATORY TEXT*100;
+      gemeinde_bfs_nr : MANDATORY 1 .. 9999;
+      steuerfuss_np_prozent : MANDATORY 0.0 .. 200.0;
+      steuerfuss_jp_prozent : MANDATORY 0.0 .. 200.0;
+    END Observation;
+    CONSTRAINTS OF SO_Steuerfuss_Gemeinden_20261016.Data.Observation =
+      UNIQUE UniqueBfsNr: gemeinde_bfs_nr;
+    END;
+
+  END Data;
+END SO_Steuerfuss_Gemeinden_20261016.

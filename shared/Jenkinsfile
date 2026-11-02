@@ -1,0 +1,98 @@
+pipeline {
+    agent any
+
+    options {
+        timeout(time: @@TIMEOUT_MINUTES@@, unit: 'MINUTES')
+        disableConcurrentBuilds()
+    }
+
+    stages {
+        stage('Validate parameters') {
+            steps {
+                script {
+                    if (!(params.ORGANISATION ?: '').trim()) {
+                        error('ORGANISATION muss gesetzt sein.')
+                    }
+                    if (!(params.ORGANISATION ==~ /[A-Za-z0-9_-]+/)) {
+                        error('Ungültige ORGANISATION.')
+                    }
+                    if (!(params.DATASET ?: '').trim()) {
+                        error('DATASET muss gesetzt sein.')
+                    }
+                    currentBuild.displayName = "#${env.BUILD_NUMBER} ${params.ORGANISATION} / ${params.DATASET}"
+                    currentBuild.description = "Datenlieferung: ${params.ORGANISATION} / ${params.DATASET}"
+                }
+            }
+        }
+
+        stage('Run GRETL Datenportal Job') {
+            steps {
+                script {
+                    lock(resource: 'datenportal-topic-repository') {
+                        def mode = params.PUBLICATION_MODE ?: 'delivery'
+                        if (!(mode in ['delivery', 'repository-metadata'])) error('Unbekannter Verarbeitungsmodus.')
+                        def repository = prepareDatenportalWorkspace()
+                        def topicRepoDir = repository.path
+                        def gradleArguments = [
+                            '--no-daemon', '-I', "${topicRepoDir}/shared/gradle/init.gradle",
+                            '-p', params.ORGANISATION, '@@GRADLE_TASK@@',
+                            "-PpublicationMode=${mode}", "-PreloadPortal=${params.RELOAD_PORTAL ?: false}",
+                            "-Pdataset=${params.DATASET}", "-Pcomment=${params.COMMENT ?: ''}",
+                            "-PtopicRepositoryMode=${repository.mode}",
+                            "-PtopicRepositoryUrl=${repository.url}",
+                            "-PtopicRepositoryBranch=${repository.branch}",
+                            "-PgitWriteBack=${repository.writeBack}",
+                            "-PgitBaseRevision=${repository.baseRevision}",
+                            "-PgitCommitterName=${repository.committerName}",
+                            "-PgitCommitterEmail=${repository.committerEmail}"
+                        ]
+                        withFileParameter(name: 'METADATA_FILE', allowNoFile: true) {
+                            withFileParameter(name: 'DATA_FILE', allowNoFile: true) {
+                                if (mode == 'repository-metadata' && (env.METADATA_FILE || env.DATA_FILE)) {
+                                    error('Repository-Abgleich akzeptiert keine Uploads.')
+                                }
+                                if (mode == 'delivery' && !env.METADATA_FILE && !env.DATA_FILE) {
+                                    error('Mindestens METADATA_FILE oder DATA_FILE muss hochgeladen werden.')
+                                }
+                                if (env.METADATA_FILE) {
+                                    gradleArguments << "-PmetadataFile=${env.METADATA_FILE}"
+                                    gradleArguments << "-PmetadataFileName=${env.METADATA_FILE_FILENAME ?: 'METADATA_FILE'}"
+                                }
+                                if (env.DATA_FILE) {
+                                    gradleArguments << "-PdataFile=${env.DATA_FILE}"
+                                    gradleArguments << "-PdataFileName=${env.DATA_FILE_FILENAME ?: 'DATA_FILE'}"
+                                    if ((params.SERIES_ID ?: '').trim()) {
+                                        gradleArguments << "-PseriesId=${params.SERIES_ID}"
+                                    }
+                                }
+                                dir(topicRepoDir) {
+                                    def runDelivery = {
+                                        sh "./shared/bin/gradlew-java17.sh ${gradleArguments.collect { shellQuote(it) }.join(' ')}"
+                                    }
+                                    try {
+                                        if (repository.credentialsId) {
+                                            withCredentials([gitUsernamePassword(credentialsId: repository.credentialsId, gitToolName: 'Default')]) {
+                                                runDelivery()
+                                            }
+                                        } else {
+                                            runDelivery()
+                                        }
+                                    } finally {
+                                        archiveArtifacts allowEmptyArchive: true, artifacts: "${params.ORGANISATION}/build/publication/outputs/**,${params.ORGANISATION}/build/publication/release/**,${params.ORGANISATION}/build/publication/*.log"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+@@POST_BLOCK@@
+}
+
+String shellQuote(Object value) {
+    String raw = value == null ? '' : value.toString()
+    return "'" + raw.replace("'", "'\"'\"'") + "'"
+}

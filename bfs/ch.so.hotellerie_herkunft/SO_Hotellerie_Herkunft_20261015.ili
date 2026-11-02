@@ -1,0 +1,18 @@
+INTERLIS 2.4;
+
+MODEL SO_Hotellerie_Herkunft_20261015 (de) AT "https://models.datenportal.so.ch/SO_Hotellerie_Herkunft_20261015" VERSION "2026-10-15" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      jahr : MANDATORY 2005 .. 2100;
+      raum_code : MANDATORY TEXT*2;
+      raum : MANDATORY TEXT*100;
+      herkunftsland : MANDATORY TEXT*100;
+      herkunft_typ : MANDATORY TEXT*20;
+      ankuenfte : MANDATORY 0 .. 99999999;
+      logiernaechte : MANDATORY 0 .. 999999999;
+      anteil_logiernaechte_prozent : MANDATORY 0.00 .. 100.00;
+      aufenthaltsdauer_naechte : 0.00 .. 999.99;
+    END Observation;
+  END Data;
+END SO_Hotellerie_Herkunft_20261015.

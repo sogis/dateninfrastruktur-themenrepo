@@ -1,0 +1,14 @@
+plugins {
+    id 'ch.so.agi.gretl'
+}
+
+description = 'Datenportal-Ausführungen der Motorfahrzeugkontrolle.'
+
+ext.datenportalOrganization = [
+        id            : 'mfk',
+        title         : 'Motorfahrzeugkontrolle',
+        label         : 'Motorfahrzeugkontrolle',
+        defaultDataset: 'ch.so.fahrzeugbestand'
+]
+
+apply from: '../shared/gradle/organisation-common.gradle'

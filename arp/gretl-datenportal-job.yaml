@@ -1,0 +1,8 @@
+title: Amt für Raumplanung
+description: Datenportal-Ausführungen des ARP.
+
+permissions:
+  read:
+    - team: datenportal-read
+  build:
+    - team: arp-build

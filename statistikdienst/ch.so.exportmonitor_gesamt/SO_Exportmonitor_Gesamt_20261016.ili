@@ -1,0 +1,15 @@
+INTERLIS 2.4;
+
+MODEL SO_Exportmonitor_Gesamt_20261016 (de) AT "https://geo.so.ch/models/SO_Exportmonitor_Gesamt_20261016" VERSION "2026-10-16" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      jahr : MANDATORY 2000 .. 2100;
+      monat : MANDATORY 1 .. 12;
+      monat_name : MANDATORY TEXT*20;
+      exporte_vorjahr_mio_chf : MANDATORY 0.0 .. 9999.9;
+      exporte_berichtsjahr_mio_chf : MANDATORY 0.0 .. 9999.9;
+      veraenderung_prozent : MANDATORY -999.9 .. 999.9;
+    END Observation;
+  END Data;
+END SO_Exportmonitor_Gesamt_20261016.

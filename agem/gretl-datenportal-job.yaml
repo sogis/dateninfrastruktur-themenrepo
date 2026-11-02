@@ -1,0 +1,8 @@
+title: Amt für Gemeinden
+description: Datenportal-Ausführungen des AGEM.
+
+permissions:
+  read:
+    - team: datenportal-read
+  build:
+    - team: agem-build

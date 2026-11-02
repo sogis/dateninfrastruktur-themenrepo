@@ -1,0 +1,8 @@
+title: Amt für Geoinformation
+description: Datenportal-Ausführungen des Amts für Geoinformation.
+
+permissions:
+  read:
+    - team: datenportal-read
+  build:
+    - team: agi-build

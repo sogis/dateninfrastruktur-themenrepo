@@ -1,0 +1,145 @@
+[[gradle-build-vertrag]]
+= Gradle-Build-Vertrag
+:page-layout: docs
+:toc: macro
+:toclevels: 2
+
+ifndef::themenrepo-gesamtdokument[]
+toc::[]
+endif::[]
+
+== Grundidee
+
+Der Gradle-Build im Themenrepo ist bewusst hierarchisch aufgebaut. Die gemeinsame Logik liegt im `shared/`-Bereich, Organisationen binden sie ein und Datensätze können optional Ergänzungen liefern.
+
+[source,text]
+----
+shared/gradle/init.gradle
+-> shared/gradle/organisation-common.gradle
+-> <organisation>/build.gradle
+-> <organisation>/<dataset>/dataset.gradle
+----
+
+== Organisationen und administrativer Root-Einstieg
+
+Jede Organisation hat ihr eigenes `build.gradle` für Standardlieferungen.
+Das Root-`build.gradle` stellt zusätzlich `initializePublication` für den
+administrativen Erstaufbau bereit. Dieser Aufruf verwendet kein `-p` und
+keine Auswahl eines einzelnen Themas; er liest alle Repository-Datenblätter.
+Details und Schutz vor Überschreiben: xref:lieferverarbeitung.adoc[Lieferverarbeitung].
+
+`preparePublication` umfasst auch den geprüften RDF/XML-Export unter
+`outputs/opendata.rdf`. `publishToDatenportal` lädt ihn bei S3-Freigabe erst nach
+bestätigter XTF-Umschaltung hoch und prüft den öffentlichen Inhalt. Die konkreten
+`Copy`-, `XslTransformer`-, `S3Upload`- und `Download`-Tasks stehen im gemeinsamen
+`datenportal-publication.gradle`; die RDF-Abbildung liegt unter `shared/xsl/opendata/`.
+
+[source,text]
+----
+agi/build.gradle
+statistikdienst/build.gradle
+----
+
+Der Gradle Wrapper wird im Repo-Root gestartet, aber mit `-p <organisation>` auf das jeweilige Organisationsprojekt gesetzt.
+
+[source,bash]
+----
+./gradlew -I "$PWD/shared/gradle/init.gradle" -p agi tasks
+./gradlew -I "$PWD/shared/gradle/init.gradle" -p statistikdienst verifyPluginSetup
+----
+
+== Organisationsspezifisches `build.gradle`
+
+Das `build.gradle` einer Organisation ist ein dünner Einstiegspunkt. Es aktiviert die benötigten Gradle-Plugins und bindet die gemeinsame Build-Logik ein.
+
+[source,groovy]
+----
+plugins {
+    id 'ch.so.agi.gretl'
+}
+
+ext.datenportalOrganization = [id: 'agi', title: 'Amt für Geoinformation']
+apply from: '../shared/gradle/organisation-common.gradle'
+----
+
+== `shared/gradle/init.gradle`
+
+`shared/gradle/init.gradle` ist die zentrale Gradle-Initialisierung. Es liest Plugin-Versionen und Repository-Listen aus `shared/gradle/gradle-build.properties` und stellt die Online-/Offline-Auflösung bereit.
+
+== `shared/gradle/gradle-build.properties`
+
+Diese Datei ist die Source of Truth für:
+
+* Plugin-IDs;
+* Plugin-Versionen;
+* Online-Repositories;
+* Plugin-Repositories;
+* Offline-Seed-Koordinaten.
+
+Neue Repositories oder Gradle-Plugins werden hier gepflegt und anschliessend in `shared/gradle/init.gradle` verdrahtet, falls ein Offline-Mapping nötig ist.
+
+== `dataset.gradle`
+
+Ein Datensatz kann optional ein `dataset.gradle` enthalten. Die Datei wird vom gemeinsamen Gradle-Skript `shared/gradle/organisation-common.gradle` geladen, sobald der ausgewählte Datensatz über seine `.xtf`- oder `.xml`-Metadatendatei aufgelöst wurde. Der Jenkins-Plugin-Scanner lädt die Datei nicht selbst.
+
+Typische Einsatzzwecke:
+
+* datensatzspezifische Gradle-Properties oder Build-Konfiguration;
+* zusätzliche oder angepasste Gradle-Tasks;
+* kleine Abweichungen im Publikationsablauf, sofern der aufgerufene Task diese berücksichtigt;
+* zusätzliche Informationen im gemeinsamen Ausführungs-Report.
+
+Die unterstützte Override-Schnittstelle ist ein optionaler Closure in der Datei:
+
+[source,groovy]
+----
+project.ext.datenportalDatasetOverride = { context ->
+    context.extraGradleProperties['datasetProfile'] = 'beispiel'
+    context.summaryLines << 'Datensatzspezifisches Profil aktiviert.'
+}
+----
+
+Der Closure erhält unter anderem den ausgewählten Datensatz, dessen Verzeichnis,
+die gelesenen Metadaten, die Jenkins-/Gradle-Parameter sowie
+`extraGradleProperties` und `summaryLines`.
+
+Nicht geeignet ist `dataset.gradle` für:
+
+* Jenkins-Job-Generierung;
+* zusätzliche Formularfelder;
+* Berechtigungen;
+* Organisation-Defaults;
+* die Erkennung oder Validierung von Datensätzen.
+
+== Ausgabe und Lieferungstyp
+
+`-PseriesId` bezeichnet die Ausgabe einer Serie, nicht die Serie selbst.
+Die Serie wird bereits durch `-Pdataset` ausgewählt. Eine Ausgabe ist nur bei
+Datenlieferungen (`-PdataFile`) zu einer `DatasetSeries` erforderlich.
+Bei reinen Metadatenlieferungen wird ein dennoch gesetztes `seriesId` ignoriert:
+Der Kontext, die vorgeschlagenen Argumente und der Ausführungsreport enthalten
+dann eine leere Ausgabe. `publicationMode=delivery` (Default) verlangt
+mindestens eine Upload-Datei. `publicationMode=repository-metadata` übernimmt
+das ausgewählte Repository-Datenblatt ohne Upload; dennoch übermittelte
+Uploads werden abgewiesen. `reloadPortal` ist standardmässig `false`.
+
+`preparePublication` bereitet ausschliesslich vor. `publishToDatenportal`
+verwendet zusätzlich die administrativen S3-/Git-Freigaben und führt
+gegebenenfalls den angeforderten Reload aus.
+
+Im `datenportalContext` beschreibt `datasetIsSeries` den Typ des Datenthemas.
+`seriesRequired` bezeichnet dagegen die bedingte Ausgabepflicht für den
+aktuellen Lauf: Serie und vorhandene Datendatei.
+
+== GRETL-Auflösung
+
+GRETL wird online über die zentralen Repository-Listen aufgelöst. Für SNAPSHOT-Versionen muss beim Bau des Offline-Bundles mit aktualisierten Abhängigkeiten gerechnet werden. Das Offline-Bundle wird nicht im Themenrepo erzeugt, sondern im Jenkins-/Image-Repo vorbereitet.
+
+== Lieferverarbeitung
+
+Der Standardablauf steht als konkrete Download-, Copy-, GRETL- und Upload-Tasks
+in `shared/gradle/datenportal-publication.gradle`; die fachliche Verarbeitung
+liegt unter `shared/sql/publication/`. Root-Initialisierung und Git-CLI haben
+je einen eigenen kleinen Skriptteil.
+
+Der Standardtask und die Git-Parameter sind in xref:lieferverarbeitung.adoc[SQL-basierte Lieferverarbeitung] beschrieben.

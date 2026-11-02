@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><ili:transfer xmlns:ili="http://www.interlis.ch/xtf/2.4/INTERLIS" xmlns:SO_AGI_DataCatalog_Base_20260529="http://www.interlis.ch/xtf/2.4/SO_AGI_DataCatalog_Base_20260529">
+  <ili:headersection>
+    <ili:models>
+      <ili:model>SO_AGI_DataCatalog_Base_20260529</ili:model>
+    </ili:models>
+    <ili:sender>ChatGPT</ili:sender>
+  </ili:headersection>
+  <ili:datasection>
+    <SO_AGI_DataCatalog_Base_20260529:Office ili:bid="SO_AGI_DataCatalog_Base_20260529.Office">
+      <SO_AGI_DataCatalog_Base_20260529:Office.Office ili:tid="ch.so.agi">
+        <SO_AGI_DataCatalog_Base_20260529:identifier>ch.so.agi</SO_AGI_DataCatalog_Base_20260529:identifier>
+        <SO_AGI_DataCatalog_Base_20260529:name>Amt für Geoinformation</SO_AGI_DataCatalog_Base_20260529:name>
+        <SO_AGI_DataCatalog_Base_20260529:abbreviation>AGI</SO_AGI_DataCatalog_Base_20260529:abbreviation>
+        <SO_AGI_DataCatalog_Base_20260529:phoneNumber>032 627 75 92</SO_AGI_DataCatalog_Base_20260529:phoneNumber>
+        <SO_AGI_DataCatalog_Base_20260529:email>mailto:agi@bd.so.ch</SO_AGI_DataCatalog_Base_20260529:email>
+        <SO_AGI_DataCatalog_Base_20260529:officeAtWeb>https://so.ch/verwaltung/bau-und-justizdepartement/amt-fuer-geoinformation/</SO_AGI_DataCatalog_Base_20260529:officeAtWeb>
+      </SO_AGI_DataCatalog_Base_20260529:Office.Office>
+      <SO_AGI_DataCatalog_Base_20260529:Office.Office ili:tid="ch.so.afu">
+        <SO_AGI_DataCatalog_Base_20260529:identifier>ch.so.afu</SO_AGI_DataCatalog_Base_20260529:identifier>
+        <SO_AGI_DataCatalog_Base_20260529:name>Amt für Umwelt</SO_AGI_DataCatalog_Base_20260529:name>
+        <SO_AGI_DataCatalog_Base_20260529:abbreviation>AfU</SO_AGI_DataCatalog_Base_20260529:abbreviation>
+        <SO_AGI_DataCatalog_Base_20260529:phoneNumber>032 627 24 47</SO_AGI_DataCatalog_Base_20260529:phoneNumber>
+        <SO_AGI_DataCatalog_Base_20260529:email>mailto:afu@bd.so.ch</SO_AGI_DataCatalog_Base_20260529:email>
+        <SO_AGI_DataCatalog_Base_20260529:officeAtWeb>https://so.ch/verwaltung/bau-und-justizdepartement/amt-fuer-umwelt/</SO_AGI_DataCatalog_Base_20260529:officeAtWeb>
+      </SO_AGI_DataCatalog_Base_20260529:Office.Office>
+      <SO_AGI_DataCatalog_Base_20260529:Office.Office ili:tid="ch.so.mfk">
+        <SO_AGI_DataCatalog_Base_20260529:identifier>ch.so.mfk</SO_AGI_DataCatalog_Base_20260529:identifier>
+        <SO_AGI_DataCatalog_Base_20260529:name>Motorfahrzeugkontrolle</SO_AGI_DataCatalog_Base_20260529:name>
+        <SO_AGI_DataCatalog_Base_20260529:abbreviation>MFK</SO_AGI_DataCatalog_Base_20260529:abbreviation>
+        <SO_AGI_DataCatalog_Base_20260529:phoneNumber>032 627 66 66</SO_AGI_DataCatalog_Base_20260529:phoneNumber>
+        <SO_AGI_DataCatalog_Base_20260529:email>mailto:mfk@mfk.so.ch</SO_AGI_DataCatalog_Base_20260529:email>
+        <SO_AGI_DataCatalog_Base_20260529:officeAtWeb>https://so.ch/verwaltung/bau-und-justizdepartement/motorfahrzeugkontrolle/</SO_AGI_DataCatalog_Base_20260529:officeAtWeb>
+      </SO_AGI_DataCatalog_Base_20260529:Office.Office>
+      <SO_AGI_DataCatalog_Base_20260529:Office.Office ili:tid="ch.so.afin">
+        <SO_AGI_DataCatalog_Base_20260529:identifier>ch.so.afin</SO_AGI_DataCatalog_Base_20260529:identifier>
+        <SO_AGI_DataCatalog_Base_20260529:name>Amt für Finanzen</SO_AGI_DataCatalog_Base_20260529:name>
+        <SO_AGI_DataCatalog_Base_20260529:abbreviation>AFIN</SO_AGI_DataCatalog_Base_20260529:abbreviation>
+        <SO_AGI_DataCatalog_Base_20260529:phoneNumber>032 627 20 96</SO_AGI_DataCatalog_Base_20260529:phoneNumber>
+        <SO_AGI_DataCatalog_Base_20260529:email>mailto:afin@fd.so.ch</SO_AGI_DataCatalog_Base_20260529:email>
+        <SO_AGI_DataCatalog_Base_20260529:officeAtWeb>https://so.ch/verwaltung/finanzdepartement/amt-fuer-finanzen/</SO_AGI_DataCatalog_Base_20260529:officeAtWeb>
+      </SO_AGI_DataCatalog_Base_20260529:Office.Office>
+      <SO_AGI_DataCatalog_Base_20260529:Office.Office ili:tid="ch.so.ksta">
+        <SO_AGI_DataCatalog_Base_20260529:identifier>ch.so.ksta</SO_AGI_DataCatalog_Base_20260529:identifier>
+        <SO_AGI_DataCatalog_Base_20260529:name>Steueramt</SO_AGI_DataCatalog_Base_20260529:name>
+        <SO_AGI_DataCatalog_Base_20260529:abbreviation>KSTA</SO_AGI_DataCatalog_Base_20260529:abbreviation>
+        <SO_AGI_DataCatalog_Base_20260529:phoneNumber>032 627 87 87</SO_AGI_DataCatalog_Base_20260529:phoneNumber>
+        <SO_AGI_DataCatalog_Base_20260529:email>mailto:steueramt.so@fd.so.ch</SO_AGI_DataCatalog_Base_20260529:email>
+        <SO_AGI_DataCatalog_Base_20260529:officeAtWeb>https://so.ch/verwaltung/finanzdepartement/steueramt/</SO_AGI_DataCatalog_Base_20260529:officeAtWeb>
+      </SO_AGI_DataCatalog_Base_20260529:Office.Office>
+      <SO_AGI_DataCatalog_Base_20260529:Office.Office ili:tid="ch.so.abmh">
+        <SO_AGI_DataCatalog_Base_20260529:identifier>ch.so.abmh</SO_AGI_DataCatalog_Base_20260529:identifier>
+        <SO_AGI_DataCatalog_Base_20260529:name>Amt für Berufsbildung, Mittel- und Hochschulen</SO_AGI_DataCatalog_Base_20260529:name>
+        <SO_AGI_DataCatalog_Base_20260529:abbreviation>ABMH</SO_AGI_DataCatalog_Base_20260529:abbreviation>
+        <SO_AGI_DataCatalog_Base_20260529:phoneNumber>032 627 28 70</SO_AGI_DataCatalog_Base_20260529:phoneNumber>
+        <SO_AGI_DataCatalog_Base_20260529:email>mailto:abmh@dbk.so.ch</SO_AGI_DataCatalog_Base_20260529:email>
+        <SO_AGI_DataCatalog_Base_20260529:officeAtWeb>https://so.ch/verwaltung/departement-fuer-bildung-kultur-und-sport/amt-fuer-berufsbildung-mittel-und-hochschulen/</SO_AGI_DataCatalog_Base_20260529:officeAtWeb>
+      </SO_AGI_DataCatalog_Base_20260529:Office.Office>
+      <SO_AGI_DataCatalog_Base_20260529:Office.Office ili:tid="ch.so.arp"><identifier xmlns="http://www.interlis.ch/xtf/2.4/SO_AGI_DataCatalog_Base_20260529">ch.so.arp</identifier><name xmlns="http://www.interlis.ch/xtf/2.4/SO_AGI_DataCatalog_Base_20260529">Amt für Raumplanung</name><abbreviation xmlns="http://www.interlis.ch/xtf/2.4/SO_AGI_DataCatalog_Base_20260529">ARP</abbreviation><phoneNumber xmlns="http://www.interlis.ch/xtf/2.4/SO_AGI_DataCatalog_Base_20260529">032 627 25 61</phoneNumber><email xmlns="http://www.interlis.ch/xtf/2.4/SO_AGI_DataCatalog_Base_20260529">mailto:arp@bd.so.ch</email><officeAtWeb xmlns="http://www.interlis.ch/xtf/2.4/SO_AGI_DataCatalog_Base_20260529">https://arp.so.ch/</officeAtWeb></SO_AGI_DataCatalog_Base_20260529:Office.Office>
+      <SO_AGI_DataCatalog_Base_20260529:Office.Office ili:tid="ch.so.sk">
+        <SO_AGI_DataCatalog_Base_20260529:identifier>ch.so.sk</SO_AGI_DataCatalog_Base_20260529:identifier>
+        <SO_AGI_DataCatalog_Base_20260529:name>Staatskanzlei</SO_AGI_DataCatalog_Base_20260529:name>
+        <SO_AGI_DataCatalog_Base_20260529:abbreviation>STK</SO_AGI_DataCatalog_Base_20260529:abbreviation>
+        <SO_AGI_DataCatalog_Base_20260529:phoneNumber>032 627 20 21</SO_AGI_DataCatalog_Base_20260529:phoneNumber>
+        <SO_AGI_DataCatalog_Base_20260529:email>mailto:kanzlei@sk.so.ch</SO_AGI_DataCatalog_Base_20260529:email>
+        <SO_AGI_DataCatalog_Base_20260529:officeAtWeb>https://so.ch/verwaltung/staatskanzlei/</SO_AGI_DataCatalog_Base_20260529:officeAtWeb>
+      </SO_AGI_DataCatalog_Base_20260529:Office.Office>
+    <Office.Office xmlns="http://www.interlis.ch/xtf/2.4/SO_AGI_DataCatalog_Base_20260529" xmlns:i="http://www.interlis.ch/xtf/2.4/INTERLIS" i:tid="ch.bfs"><identifier>ch.bfs</identifier><name>Bundesamt für Statistik</name><abbreviation>BFS</abbreviation><phoneNumber>058 463 66 66</phoneNumber><email>mailto:info@bfs.admin.ch</email><officeAtWeb>https://www.bfs.admin.ch/</officeAtWeb></Office.Office><Office.Office xmlns:i="http://www.interlis.ch/xtf/2.4/INTERLIS" i:tid="ch.so.agem" xmlns="http://www.interlis.ch/xtf/2.4/SO_AGI_DataCatalog_Base_20260529"><identifier>ch.so.agem</identifier><name>Amt für Gemeinden</name><abbreviation>AGEM</abbreviation><phoneNumber>032 627 23 57</phoneNumber><email>mailto:agem@vd.so.ch</email><officeAtWeb>https://agem.so.ch/</officeAtWeb></Office.Office></SO_AGI_DataCatalog_Base_20260529:Office>
+  </ili:datasection>
+</ili:transfer>

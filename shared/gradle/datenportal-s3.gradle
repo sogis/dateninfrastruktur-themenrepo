@@ -1,0 +1,114 @@
+/*
+ * Gemeinsame S3-Konfiguration für GRETL-Upload-Tasks.
+ *
+ * Gradle stellt ORG_GRADLE_PROJECT_<name> aus der Umgebung als normale
+ * Projekteigenschaften bereit. So können Jenkins und lokale Aufrufe dieselbe
+ * Schnittstelle verwenden, ohne Zugangsdaten im Themenrepo zu speichern.
+ * Die Werte werden hier einmal gelesen, Pflichtwerte aber erst bei Bedarf geprüft:
+ * Aufgabenlisten und Vorschauen müssen auch ohne S3-Zugang funktionieren.
+ */
+
+def readDatenportalS3Property = { String propertyName ->
+    def value = project.findProperty(propertyName)
+    value == null ? null : value.toString()
+}
+
+Map<String, Object> datenportalS3 = [
+        endpoint : readDatenportalS3Property('s3Endpoint')?.trim(),
+        region   : readDatenportalS3Property('s3Region')?.trim(),
+        bucketName: readDatenportalS3Property('s3BucketName')?.trim(),
+        accessKey: readDatenportalS3Property('s3AccessKey'),
+        secretKey: readDatenportalS3Property('s3SecretKey'),
+        acl      : readDatenportalS3Property('s3Acl')?.trim() ?: 'private'
+]
+
+def hasText = { Object value ->
+    value != null && !value.toString().trim().isEmpty()
+}
+
+def requireDatenportalS3 = {
+    Map<String, String> propertyNames = [
+            endpoint : 's3Endpoint',
+            region   : 's3Region',
+            bucketName: 's3BucketName',
+            accessKey: 's3AccessKey',
+            secretKey: 's3SecretKey'
+    ]
+    List<String> missing = propertyNames.findAll { key, propertyName ->
+        !hasText(datenportalS3[key])
+    }.values().toList()
+
+    if (!missing.isEmpty()) {
+        throw new GradleException(
+                "S3 configuration is incomplete. Missing Gradle properties: ${missing.join(', ')}")
+    }
+    return datenportalS3
+}
+
+def configureDatenportalS3Upload = { Object uploadTask ->
+    // Gradle prüft erforderliche Task-Eigenschaften bereits vor doFirst. Leere
+    // Platzhalter erlauben zunächst die Konfiguration des Tasks; requireDatenportalS3
+    // meldet beim Ausführen gezielt die fehlenden Property-Namen. Die Prüfung gibt
+    // bewusst keine Credential-Werte aus und wird für reine Vorschauen nicht benötigt.
+    uploadTask.accessKey = datenportalS3.accessKey ?: ''
+    uploadTask.secretKey = datenportalS3.secretKey ?: ''
+    uploadTask.endpoint = datenportalS3.endpoint ?: ''
+    uploadTask.region = datenportalS3.region ?: ''
+    uploadTask.bucketName = datenportalS3.bucketName ?: ''
+    uploadTask.acl = datenportalS3.acl ?: 'private'
+
+    uploadTask.doFirst {
+        Map<String, Object> config = requireDatenportalS3()
+        uploadTask.accessKey = config.accessKey
+        uploadTask.secretKey = config.secretKey
+        uploadTask.endpoint = config.endpoint
+        uploadTask.region = config.region
+        uploadTask.bucketName = config.bucketName
+        uploadTask.acl = config.acl
+    }
+}
+
+// Diese bestehende Hilfsfunktion bleibt für organisationsspezifische Uploads nutzbar.
+// Der Standard-Publikationsjob deklariert seine Upload-Tasks selbst und verwendet
+// lediglich die obige zentrale Konfiguration. Die Taskklasse kommt hier aus dem
+// Plugin-Klassenpfad des aufrufenden Projekts, damit kein zusätzlicher Import nötig ist.
+def registerDatenportalS3Upload = { String taskName, Closure taskConfiguration ->
+    if (!hasText(taskName)) {
+        throw new GradleException('An S3 upload task name is required.')
+    }
+
+    Class s3UploadTaskClass = project.buildscript.classLoader.loadClass(
+            'ch.so.agi.gretl.tasks.S3Upload')
+    tasks.register(taskName, s3UploadTaskClass) {
+        if (taskConfiguration != null) {
+            // Die übergebene Closure soll sich wie ein normaler Gradle-Taskblock
+            // verhalten: sourceFile usw. beziehen sich zuerst auf den neuen Task,
+            // weitere Projektwerte bleiben über das aufrufende Projekt erreichbar.
+            Closure configuration = taskConfiguration.rehydrate(delegate, project, project)
+            configuration.resolveStrategy = Closure.DELEGATE_FIRST
+            configuration.call()
+        }
+        configureDatenportalS3Upload(delegate)
+    }
+}
+
+project.ext.datenportalS3 = datenportalS3
+project.ext.requireDatenportalS3 = requireDatenportalS3
+project.ext.configureDatenportalS3Upload = configureDatenportalS3Upload
+project.ext.registerDatenportalS3Upload = registerDatenportalS3Upload
+
+tasks.register('verifyDatenportalS3Configuration') {
+    group = 'datenportal'
+    description = 'Validates the shared S3 configuration without printing credentials.'
+    doLast {
+        // Für die Diagnose reichen Zielangaben und das Vorhandensein der Schlüssel.
+        // Die Schlüssel selbst dürfen auch bei einem manuellen Prüflauf nicht ins Log.
+        Map<String, Object> config = requireDatenportalS3()
+        logger.lifecycle("S3 endpoint: ${config.endpoint}")
+        logger.lifecycle("S3 region: ${config.region}")
+        logger.lifecycle("S3 bucket: ${config.bucketName}")
+        logger.lifecycle("S3 access key configured: ${hasText(config.accessKey)}")
+        logger.lifecycle("S3 secret key configured: ${hasText(config.secretKey)}")
+        logger.lifecycle("S3 ACL: ${config.acl}")
+    }
+}

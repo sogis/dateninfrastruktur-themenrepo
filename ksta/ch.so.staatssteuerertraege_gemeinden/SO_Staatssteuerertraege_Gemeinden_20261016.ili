@@ -1,0 +1,14 @@
+INTERLIS 2.4;
+
+MODEL SO_Staatssteuerertraege_Gemeinden_20261016 (de) AT "https://models.so.ch/SO_Staatssteuerertraege_Gemeinden_20261016" VERSION "2026-10-16" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      gemeinde : MANDATORY TEXT*100;
+      gemeinde_bfs_nr : MANDATORY 1 .. 9999;
+      staatssteuer_np_tchf : MANDATORY 0 .. 9999999;
+      staatssteuer_jp_tchf : MANDATORY 0 .. 9999999;
+      staatssteuer_total_tchf : MANDATORY 0 .. 9999999;
+    END Observation;
+  END Data;
+END SO_Staatssteuerertraege_Gemeinden_20261016.

@@ -1,0 +1,95 @@
+= Seed-Lauf und Bootstrap
+:page-layout: docs
+:toc: macro
+:toclevels: 2
+
+ifndef::themenrepo-gesamtdokument[]
+toc::[]
+endif::[]
+
+== Zweck des Seed-Laufs
+
+Der Seed-Lauf scannt das Themenrepo und erzeugt oder aktualisiert daraus die
+materialisierten Jenkins-Jobs. Eine Organisation wird dabei nur erkannt, wenn
+sie die erwartete Organisationskonfiguration mit dem exakt vorgesehenen
+Dateinamen enthält. Andere Dateien oder abweichende Dateinamen werden vom
+Scanner ignoriert. Die generierten Jobs sind keine Live-Ansicht auf das
+Repository.
+
+== Wann muss neu geseedet werden?
+
+Ein Seed-Lauf ist nötig nach Änderungen an:
+
+* Organisationen oder Datensätzen;
+* `gretl-datenportal-job.yaml`;
+* `shared/gretl-datenportal-defaults.yaml`;
+* `shared/gretl-datenportal-teams.yaml`;
+* `shared/Jenkinsfile`;
+* Gradle-Build-Logik, wenn sich dadurch die generierten Jobs oder ihr Verhalten ändern;
+* dem Jenkins-Plugin, wenn sich Scanner-, Validierungs- oder Jobgenerator-Logik geändert hat.
+
+== Lokaler Bootstrap
+
+Nach einem frischen lokalen Checkout provisioniert das Jenkins-Plugin den Seed-Job `gretl-datenportal-seed` nach dem Start automatisch.
+
+In der lokalen Dev-Umgebung kommen Repository-Quelle und Modus aus
+`datenportal-jenkins-dev/casc/jenkins.yaml` beziehungsweise den Env-Variablen
+`THEMEN_REPO_MODE`, `THEMEN_REPO_URL`, `THEMEN_REPO_PATH` und
+`THEMEN_REPO_BRANCH`.
+
+Für lokale Tests verwendet `datenportal-jenkins-dev` den JCasC-Local-Security-Realm. Eine AD-/LDAP-Umgebung ist dafür nicht erforderlich. In einer
+produktiven Umgebung liefert dagegen die konfigurierte
+AD-/LDAP-/Entra-Authentisierung die Jenkins-Benutzer-IDs, die in
+`shared/gretl-datenportal-teams.yaml` referenziert werden.
+
+Der Seed-Job laeuft periodisch per Cron (`H/15 * * * *`) und kann für Tests jederzeit manuell gestartet werden. Die generierten Organisation-Jobs entstehen erst nach dem Seed-Lauf.
+
+Im produktionsnahen Modus `managed-git` checkt der Seed-Lauf den committed Stand
+des konfigurierten Git-Branches aus. Der lokale Modus `working-tree` kopiert
+dagegen beim Seed-Lauf den externen Arbeitsbaum inklusive uncommitteter und
+untracked Dateien in einen Jenkins-internen Snapshot. Das externe Themenrepo
+wird nicht verändert; der Snapshot bleibt bis zum nächsten Seed-Lauf bestehen.
+Damit ist klar, ob eine Änderung fachlich versioniert oder nur lokal getestet
+wird. Der vollständige Dev-Stack-Start `scripts/up.sh` führt als lokale
+Testadministration bei jedem Aufruf einen Seed aus und wartet auf Erfolg.
+Beim separaten Jenkins-Start den ersten erfolgreichen Lauf administrativ
+prüfen; danach kann das Mitglied des konfigurierten Seeder-Teams `seed-user`
+den Seeder starten.
+
+== Publikationsbestand initialisieren
+
+Der oben beschriebene Bootstrap erzeugt Jenkins-Jobs, keinen S3-Bestand.
+Vor der ersten Standardlieferung muss zusätzlich der administrative Root-Task
+`initializePublication` einen Gesamtstand mit `current.json` erzeugen.
+Der normale lokale Dev-Stack-Start übernimmt dies bei HTTP 404 im eigenen
+Garage-Bucket automatisch: nach erfolgreichem Seed, bei pausiertem Jenkins,
+in einer beschreibbaren Kopie des Seed-Checkouts. Vorhandene Bestände bleiben
+erhalten. Migration und abweichende Publikationsziele werden explizit
+administrativ vorbereitet; Standardjobs dafür pausieren und laufende Builds abwarten. Die vollständige
+link:https://codeberg.org/edigonzales/datenportal-dev-stack/src/branch/main/docs/biblios/inbetriebnahme.adoc[Stack-Inbetriebnahme]
+beschreibt die beschreibbare Container-Arbeitskopie und optionale Katalogmigration.
+Bei vorhandenem Manifest ist die Initialisierung gesperrt. Ein späterer Seed
+aktualisiert keinen S3-Bestand; dafür Lieferung oder Repository-Abgleich starten.
+
+== Was versioniert ist
+
+Versioniert sind:
+
+* Themenrepo-Inhalte;
+* Shared Defaults;
+* Jenkinsfiles;
+* Gradle-Build-Logik;
+* Datenblätter.
+
+Nicht versioniert sind lokal erzeugte Jenkins-Jobs, Build-Historien und das lokale Checkout unter `jenkins-home/gretl-datenportal`.
+
+== Nach Plugin-Änderungen
+
+Nach einer Änderung am Jenkins-Plugin reicht es nicht, die `.jpi` zu überschreiben. Jenkins muss neu gestartet werden, damit Klassen, Deskriptoren und Jelly-Views neu geladen werden.
+
+Danach ist ein Seed-Lauf notwendig, damit bestehende generierte Jobs neue Pipeline-Inhalte oder neue Generatorlogik übernehmen.
+
+== Weiterführend
+
+* Die technische Seed- und Jobgenerator-Logik liegt im Repository link:https://codeberg.org/edigonzales/datenportal-jenkins-gretl-plugin[datenportal-jenkins-gretl-plugin].
+* Lokaler Jenkins-Start, Plugin-Installationsloop und Offline-Bundle-Bau liegen im Repository link:https://codeberg.org/edigonzales/datenportal-jenkins-dev[datenportal-jenkins-dev].

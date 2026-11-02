@@ -1,0 +1,16 @@
+
+
+// BEGIN datenportal-themenintegrator CsvValidator
+// Configure the existing publication validator; do not register a second task.
+gradle.projectsEvaluated {
+    tasks.named('validateDeliveredCsv').configure {
+        def sharedModels = System.getenv('DATENPORTAL_MODELS_DIR') ?: file('../shared/models').absolutePath
+        modelDirectories(file('ch.so.gws.gebaeude_bauperiode').absolutePath + ';' + sharedModels)
+        firstLineIsHeader.set(true)
+        valueSeparator.set(';')
+        valueDelimiter.set('"')
+        encoding.set('UTF-8')
+        failOnError.set(true)
+    }
+}
+// END datenportal-themenintegrator CsvValidator

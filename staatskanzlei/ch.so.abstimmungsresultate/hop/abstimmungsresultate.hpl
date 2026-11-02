@@ -1,0 +1,4251 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pipeline>
+  <info>
+    <name>staatskanzlei.abstimmungsresultate</name>
+    <description>eCH-0252 v1: eidgenoessische und kantonale Geschaefte, eine Zeile pro Geschaeftskomponente und Gemeinde; ausschliesslich Standard-Transforms.</description>
+    <parameters>
+      <parameter>
+        <name>INPUT_XML</name>
+        <default_value />
+        <description>eCH-0252-v1 XML-Datei (voteBaseDelivery)</description>
+      </parameter>
+      <parameter>
+        <name>OUTPUT_DIR</name>
+        <default_value />
+        <description>Bestehender Ausgabeordner ausserhalb des Checkouts</description>
+      </parameter>
+    </parameters>
+  </info>
+  <notepads>
+    <notepad>
+      <xloc>70</xloc>
+      <yloc>35</yloc>
+      <width>1250</width>
+      <height>75</height>
+      <note>eCH-0252 v1 / voteBaseDelivery. Lieferkopf und alle Resultate werden vor der CSV-Ausgabe geprueft.
+Nur CH/CT-Geschaefte werden exportiert; Gemeinde-Auszaehlkreise bleiben erhalten.
+Standard-Transforms; INPUT_XML und OUTPUT_DIR bleiben die Launcher-Parameter.</note>
+      <fontsize>10</fontsize>
+      <fontname>Sans</fontname>
+      <fontbold>N</fontbold>
+      <fontitalic>N</fontitalic>
+      <fontcolorred>0</fontcolorred>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorblue>0</fontcolorblue>
+      <backgroundcolorred>255</backgroundcolorred>
+      <backgroundcolorgreen>255</backgroundcolorgreen>
+      <backgroundcolorblue>224</backgroundcolorblue>
+      <bordercolorred>150</bordercolorred>
+      <bordercolorgreen>150</bordercolorgreen>
+      <bordercolorblue>150</bordercolorblue>
+    </notepad>
+    <notepad>
+      <xloc>70</xloc>
+      <yloc>760</yloc>
+      <width>1250</width>
+      <height>75</height>
+      <note>Typ 1/2: Ja und Nein. Typ 3: Hauptvorlage und Gegenvorschlag; jeweils andere Stimmenfelder sind echte numerische NULLs.
+Optionale Werte bleiben leer. Kreuzklassifikationen werden nicht als Einzelklassifikationen aufsummiert.
+Sort Rows puffert den gesamten Strom. Text File Output oeffnet erst mit der ersten validierten Ausgabezeile.</note>
+      <fontsize>10</fontsize>
+      <fontname>Sans</fontname>
+      <fontbold>N</fontbold>
+      <fontitalic>N</fontitalic>
+      <fontcolorred>0</fontcolorred>
+      <fontcolorgreen>0</fontcolorgreen>
+      <fontcolorblue>0</fontcolorblue>
+      <backgroundcolorred>255</backgroundcolorred>
+      <backgroundcolorgreen>255</backgroundcolorgreen>
+      <backgroundcolorblue>224</backgroundcolorblue>
+      <bordercolorred>150</bordercolorred>
+      <bordercolorgreen>150</bordercolorgreen>
+      <bordercolorblue>150</bordercolorblue>
+    </notepad>
+  </notepads>
+  <order>
+    <hop>
+      <from>Parameter</from>
+      <to>Lieferkopf lesen</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Lieferkopf lesen</from>
+      <to>Lieferung pruefen</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Lieferung pruefen</from>
+      <to>Datum typisieren</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Datum typisieren</from>
+      <to>Bund-ID-Warnung notwendig</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Bund-ID-Warnung notwendig</from>
+      <to>Bund-ID-Warnung</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Bund-ID-Warnung notwendig</from>
+      <to>Gemeinderesultate lesen</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Bund-ID-Warnung</from>
+      <to>Gemeinderesultate lesen</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Gemeinderesultate lesen</from>
+      <to>Resultatfelder pruefen</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Resultatfelder pruefen</from>
+      <to>Zahlen und Zeitstempel typisieren</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Zahlen und Zeitstempel typisieren</from>
+      <to>Pruefwert Null</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Pruefwert Null</from>
+      <to>Geschaeftsgruppe und Pruefwert</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Geschaeftsgruppe und Pruefwert</from>
+      <to>Stimmensummen berechnen</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Stimmensummen berechnen</from>
+      <to>Stimmensummen pruefen</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Stimmensummen pruefen</from>
+      <to>Nur Bund und Kanton</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Nur Bund und Kanton</from>
+      <to>Ebene benennen</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Nur Bund und Kanton</from>
+      <to>Gemeindeabstimmungen verwerfen</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Ebene benennen</from>
+      <to>Geschaeftstyp benennen</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Geschaeftstyp benennen</from>
+      <to>Auszaehlstatus benennen</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Auszaehlstatus benennen</from>
+      <to>Dateiname bilden</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dateiname bilden</from>
+      <to>Stimmen zuordnen</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Stimmen zuordnen</from>
+      <to>Ja-Nein-Spalten</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Ja-Nein-Spalten</from>
+      <to>Ja-Nein-NULLs</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Ja-Nein-NULLs</from>
+      <to>Ja-Nein-Schema</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Stimmen zuordnen</from>
+      <to>Stichfrage-Spalten</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Stichfrage-Spalten</from>
+      <to>Stichfrage-NULLs</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Stichfrage-NULLs</from>
+      <to>Stichfrage-Schema</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Stimmen zuordnen</from>
+      <to>Unbekannter Geschaeftstyp</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Ja-Nein-Schema</from>
+      <to>Resultate sortieren</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Stichfrage-Schema</from>
+      <to>Resultate sortieren</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Resultate sortieren</from>
+      <to>CSV schreiben</to>
+      <enabled>Y</enabled>
+    </hop>
+  </order>
+  <transform>
+    <name>Parameter</name>
+    <type>GetVariable</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>100</xloc>
+      <yloc>150</yloc>
+    </GUI>
+    <fields>
+      <field>
+        <name>input_file</name>
+        <variable>${INPUT_XML}</variable>
+        <type>String</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
+        <name>output_prefix</name>
+        <variable>${OUTPUT_DIR}/abstimmungsresultate_</variable>
+        <type>String</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+    </fields>
+  </transform>
+  <transform>
+    <name>Lieferkopf lesen</name>
+    <type>getXMLData</type>
+    <description>Praefixunabhaengige XPath-Ausdruecke mit expliziten Namespace-URIs; keine Wiederholung fehlender Werte.</description>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>290</xloc>
+      <yloc>150</yloc>
+    </GUI>
+    <include>N</include>
+    <rownum>N</rownum>
+    <addresultfile>N</addresultfile>
+    <namespaceaware>N</namespaceaware>
+    <ignorecomments>Y</ignorecomments>
+    <readurl>N</readurl>
+    <validating>N</validating>
+    <usetoken>N</usetoken>
+    <IsIgnoreEmptyFile>N</IsIgnoreEmptyFile>
+    <doNotFailIfNoFile>N</doNotFailIfNoFile>
+    <encoding>UTF-8</encoding>
+    <limit>0</limit>
+    <loopxpath>/*</loopxpath>
+    <IsInFields>Y</IsInFields>
+    <IsAFile>Y</IsAFile>
+    <XmlField>input_file</XmlField>
+    <prunePath />
+    <fields>
+      <field>
+        <name>lieferung_id</name>
+        <xpath>*[local-name()='deliveryHeader' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='messageId' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0058/5']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>lieferung_zeitpunkt</name>
+        <xpath>*[local-name()='deliveryHeader' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='messageDate' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0058/5']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>testlieferung</name>
+        <xpath>*[local-name()='deliveryHeader' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='testDeliveryFlag' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0058/5']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>root_namespace</name>
+        <xpath>namespace-uri(.)</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>root_element</name>
+        <xpath>local-name(.)</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>base_count</name>
+        <xpath>count(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>Integer</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>abstimmungstag</name>
+        <xpath>*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='pollingDay' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>geschaeftsanzahl</name>
+        <xpath>*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='numberOfEntries' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>geschaeftsanzahl_stimmt</name>
+        <xpath>count(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) = number(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='numberOfEntries' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>resultatanzahl</name>
+        <xpath>count(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countingCircleInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>Integer</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>geschaeft_ids_eindeutig</name>
+        <xpath>not(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][. = preceding::*[local-name()='voteIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']])</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>hauptgeschaeft_verweise_gueltig</name>
+        <xpath>not(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='mainVoteIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][not(. = ../../../*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='voteSubType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='1']/*[local-name()='voteIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) or . = ../*[local-name()='voteIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']]) and not(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][(*[local-name()='voteSubType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='2' or *[local-name()='voteSubType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='3') and not(*[local-name()='mainVoteIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])])</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>gemeindeschluessel_eindeutig</name>
+        <xpath>not(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countingCircleInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countingCircle' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countingCircleId' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][. = ../../preceding-sibling::*[local-name()='countingCircleInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countingCircle' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countingCircleId' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']])</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>geschaeftsdaten_stimmen</name>
+        <xpath>not(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][not(*[local-name()='pollingDay' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])]) and not(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='pollingDay' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][. != ../../../*[local-name()='pollingDay' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']])</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>struktur_gueltig</name>
+        <xpath>not(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][count(*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) != 1 or not(*[local-name()='countingCircleInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])]) and not(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countingCircleInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][count(*[local-name()='countingCircle' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) != 1 or count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) != 1])</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>titel_eindeutig</name>
+        <xpath>not(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][count(*[local-name()='voteTitleInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='language' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='de']) != 1])</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>bund_id_pro_geschaeft_eindeutig</name>
+        <xpath>not(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][count(*[local-name()='otherIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='idName' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='idBund']) &gt; 1])</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>bund_id_duplikate</name>
+        <xpath>count(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='otherIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='idName' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='idBund']/*[local-name()='id' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][. = preceding::*[local-name()='id' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][../*[local-name()='idName' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='idBund']])</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>Integer</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>doppelte_bund_id</name>
+        <xpath>*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='otherIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='idName' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='idBund']/*[local-name()='id' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][. = preceding::*[local-name()='id' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][../*[local-name()='idName' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='idBund']]</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>schluessel_kanonisch_gueltig</name>
+        <xpath>not(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][. != normalize-space(.)] | *[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countingCircleInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countingCircle' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countingCircleId' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][. != normalize-space(.)] | *[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='mainVoteIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][. != normalize-space(.)])</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>lieferwerte_eindeutig</name>
+        <xpath>count(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='pollingDay' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) = 1 and count(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='numberOfEntries' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) = 1</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>bund_kanton_geschaefte</name>
+        <xpath>count(*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='domainOfInfluence' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='domainOfInfluenceType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0155/5']='CH' or *[local-name()='domainOfInfluence' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='domainOfInfluenceType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0155/5']='CT'])</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>Integer</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+    </fields>
+  </transform>
+  <transform>
+    <name>Lieferung pruefen</name>
+    <type>Validator</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>490</xloc>
+      <yloc>150</yloc>
+    </GUI>
+    <validate_all>N</validate_all>
+    <concat_errors>N</concat_errors>
+    <validator_field>
+      <validation_name>root_namespace</validation_name>
+      <name>root_namespace</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>root_namespace</error_code>
+      <error_description>Nur eCH-0252-v1 mit Namespace /1 wird unterstuetzt.</error_description>
+      <allowed_value>
+        <value>http://www.ech.ch/xmlns/eCH-0252/1</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>root_element</validation_name>
+      <name>root_element</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>root_element</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: root_element</error_description>
+      <allowed_value>
+        <value>delivery</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>base_count</validation_name>
+      <name>base_count</name>
+      <data_type>Integer</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>base_count</error_code>
+      <error_description>Genau eine voteBaseDelivery wird erwartet.</error_description>
+      <allowed_value>
+        <value>1</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>abstimmungstag</validation_name>
+      <name>abstimmungstag</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^\d{4}-\d{2}-\d{2}$</regular_expression>
+      <error_code>abstimmungstag</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: abstimmungstag</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>geschaeftsanzahl</validation_name>
+      <name>geschaeftsanzahl</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^[1-9][0-9]{0,2}$</regular_expression>
+      <error_code>geschaeftsanzahl</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: geschaeftsanzahl</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>resultatanzahl</validation_name>
+      <name>resultatanzahl</name>
+      <data_type>Integer</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value>1</min_value>
+      <max_value />
+      <regular_expression />
+      <error_code>resultatanzahl</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: resultatanzahl</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>geschaeftsanzahl_stimmt</validation_name>
+      <name>geschaeftsanzahl_stimmt</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>geschaeftsanzahl_stimmt</error_code>
+      <error_description>Strukturpruefung fehlgeschlagen: geschaeftsanzahl_stimmt</error_description>
+      <allowed_value>
+        <value>true</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>geschaeft_ids_eindeutig</validation_name>
+      <name>geschaeft_ids_eindeutig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>geschaeft_ids_eindeutig</error_code>
+      <error_description>Strukturpruefung fehlgeschlagen: geschaeft_ids_eindeutig</error_description>
+      <allowed_value>
+        <value>true</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>hauptgeschaeft_verweise_gueltig</validation_name>
+      <name>hauptgeschaeft_verweise_gueltig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>hauptgeschaeft_verweise_gueltig</error_code>
+      <error_description>Strukturpruefung fehlgeschlagen: hauptgeschaeft_verweise_gueltig</error_description>
+      <allowed_value>
+        <value>true</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>gemeindeschluessel_eindeutig</validation_name>
+      <name>gemeindeschluessel_eindeutig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>gemeindeschluessel_eindeutig</error_code>
+      <error_description>Strukturpruefung fehlgeschlagen: gemeindeschluessel_eindeutig</error_description>
+      <allowed_value>
+        <value>true</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>geschaeftsdaten_stimmen</validation_name>
+      <name>geschaeftsdaten_stimmen</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>geschaeftsdaten_stimmen</error_code>
+      <error_description>Strukturpruefung fehlgeschlagen: geschaeftsdaten_stimmen</error_description>
+      <allowed_value>
+        <value>true</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>struktur_gueltig</validation_name>
+      <name>struktur_gueltig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>struktur_gueltig</error_code>
+      <error_description>Strukturpruefung fehlgeschlagen: struktur_gueltig</error_description>
+      <allowed_value>
+        <value>true</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>titel_eindeutig</validation_name>
+      <name>titel_eindeutig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>titel_eindeutig</error_code>
+      <error_description>Strukturpruefung fehlgeschlagen: titel_eindeutig</error_description>
+      <allowed_value>
+        <value>true</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>bund_id_pro_geschaeft_eindeutig</validation_name>
+      <name>bund_id_pro_geschaeft_eindeutig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>bund_id_pro_geschaeft_eindeutig</error_code>
+      <error_description>Strukturpruefung fehlgeschlagen: bund_id_pro_geschaeft_eindeutig</error_description>
+      <allowed_value>
+        <value>true</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>schluessel_kanonisch_gueltig</validation_name>
+      <name>schluessel_kanonisch_gueltig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>schluessel_kanonisch_gueltig</error_code>
+      <error_description>Strukturpruefung fehlgeschlagen: schluessel_kanonisch_gueltig</error_description>
+      <allowed_value>
+        <value>true</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>lieferwerte_eindeutig</validation_name>
+      <name>lieferwerte_eindeutig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>lieferwerte_eindeutig</error_code>
+      <error_description>Strukturpruefung fehlgeschlagen: lieferwerte_eindeutig</error_description>
+      <allowed_value>
+        <value>true</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>bund_kanton_geschaefte</validation_name>
+      <name>bund_kanton_geschaefte</name>
+      <data_type>Integer</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value>1</min_value>
+      <max_value />
+      <regular_expression />
+      <error_code>bund_kanton_geschaefte</error_code>
+      <error_description>Die Lieferung enthaelt keine eidgenoessischen oder kantonalen Abstimmungsgeschaefte (CH/CT). Keine CSV-Ausgabe.</error_description>
+    </validator_field>
+  </transform>
+  <transform>
+    <name>Datum typisieren</name>
+    <type>SelectValues</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>680</xloc>
+      <yloc>150</yloc>
+    </GUI>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>abstimmungstag</name>
+        <rename>abstimmungstag</rename>
+        <type>Date</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>yyyy-MM-dd</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+    </fields>
+  </transform>
+  <transform>
+    <name>Bund-ID-Warnung notwendig</name>
+    <type>FilterRows</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>870</xloc>
+      <yloc>150</yloc>
+    </GUI>
+    <send_true_to>Bund-ID-Warnung</send_true_to>
+    <send_false_to>Gemeinderesultate lesen</send_false_to>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>bund_id_duplikate</leftvalue>
+        <function>&gt;</function>
+        <rightvalue />
+        <value>
+          <name>constant</name>
+          <type>Integer</type>
+          <text>0</text>
+          <length>-1</length>
+          <precision>0</precision>
+          <isnull>N</isnull>
+        </value>
+      </condition>
+    </compare>
+  </transform>
+  <transform>
+    <name>Bund-ID-Warnung</name>
+    <type>WriteToLog</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>1070</xloc>
+      <yloc>60</yloc>
+    </GUI>
+    <displayHeader>N</displayHeader>
+    <loglevel>BASIC</loglevel>
+    <logmessage>WARNUNG: Bundes-ID mehrfach verwendet. Unveraendert uebernommen; geschaeft_id bleibt die Identitaet.</logmessage>
+    <limitRows>Y</limitRows>
+    <limitRowsNumber>1</limitRowsNumber>
+    <fields>
+      <field>
+        <name>lieferung_id</name>
+      </field>
+      <field>
+        <name>doppelte_bund_id</name>
+      </field>
+      <field>
+        <name>bund_id_duplikate</name>
+      </field>
+    </fields>
+  </transform>
+  <transform>
+    <name>Gemeinderesultate lesen</name>
+    <type>getXMLData</type>
+    <description>Praefixunabhaengige XPath-Ausdruecke mit expliziten Namespace-URIs; keine Wiederholung fehlender Werte.</description>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>1070</xloc>
+      <yloc>150</yloc>
+    </GUI>
+    <include>N</include>
+    <rownum>N</rownum>
+    <addresultfile>N</addresultfile>
+    <namespaceaware>N</namespaceaware>
+    <ignorecomments>Y</ignorecomments>
+    <readurl>N</readurl>
+    <validating>N</validating>
+    <usetoken>N</usetoken>
+    <IsIgnoreEmptyFile>N</IsIgnoreEmptyFile>
+    <doNotFailIfNoFile>N</doNotFailIfNoFile>
+    <encoding>UTF-8</encoding>
+    <limit>0</limit>
+    <loopxpath>/*/*[local-name()='voteBaseDelivery' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countingCircleInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</loopxpath>
+    <IsInFields>Y</IsInFields>
+    <IsAFile>Y</IsAFile>
+    <XmlField>input_file</XmlField>
+    <prunePath />
+    <fields>
+      <field>
+        <name>geschaeft_id</name>
+        <xpath>../*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>hauptgeschaeft_id</name>
+        <xpath>../*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='mainVoteIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>bund_id</name>
+        <xpath>../*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='otherIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='idName' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='idBund']/*[local-name()='id' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>ebene_code</name>
+        <xpath>../*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='domainOfInfluence' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='domainOfInfluenceType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0155/5']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>einflussbereich_id</name>
+        <xpath>../*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='domainOfInfluence' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='domainOfInfluenceIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0155/5']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>titel</name>
+        <xpath>../*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteTitleInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='language' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='de']/*[local-name()='voteTitle' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>kurztitel</name>
+        <xpath>../*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteTitleInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='language' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='de']/*[local-name()='voteTitleShort' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>geschaeftstyp_code</name>
+        <xpath>../*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteSubType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>auszaehlkreis_code</name>
+        <xpath>*[local-name()='countingCircle' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='domainOfInfluenceType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>gemeinde_bfs_nr</name>
+        <xpath>*[local-name()='countingCircle' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countingCircleId' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>gemeinde_name</name>
+        <xpath>*[local-name()='countingCircle' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countingCircleName' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmberechtigte</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotersInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotersTotal' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmberechtigte_schweizer</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotersInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='subtotalInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='voterType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='1' and not(*[local-name()='sex' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])]/*[local-name()='countOfVoters' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmberechtigte_schweizer_eindeutig</name>
+        <xpath>count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotersInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='subtotalInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='voterType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='1' and not(*[local-name()='sex' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])]) &lt;= 1</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmberechtigte_auslandschweizer</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotersInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='subtotalInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='voterType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='2' and not(*[local-name()='sex' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])]/*[local-name()='countOfVoters' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmberechtigte_auslandschweizer_eindeutig</name>
+        <xpath>count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotersInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='subtotalInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='voterType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='2' and not(*[local-name()='sex' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])]) &lt;= 1</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmberechtigte_maennlich</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotersInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='subtotalInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='sex' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='1' and not(*[local-name()='voterType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])]/*[local-name()='countOfVoters' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmberechtigte_maennlich_eindeutig</name>
+        <xpath>count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotersInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='subtotalInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='sex' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='1' and not(*[local-name()='voterType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])]) &lt;= 1</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmberechtigte_weiblich</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotersInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='subtotalInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='sex' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='2' and not(*[local-name()='voterType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])]/*[local-name()='countOfVoters' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmberechtigte_weiblich_eindeutig</name>
+        <xpath>count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotersInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='subtotalInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='sex' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='2' and not(*[local-name()='voterType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])]) &lt;= 1</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmrechtsausweise_urne</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='votingCardInformationType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotingCardsReceivedInBallotbox' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmrechtsausweise_brieflich</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='votingCardInformationType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotingCardsReceivedByMail' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>fully_counted_code</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='fullyCountedTrue' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>freigegeben_am</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='releasedTimeStamp' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>gesperrt_am</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='lockoutTimeStamp' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmbeteiligung_prozent</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voterTurnout' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmzettel_eingegangen</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='receivedVotes' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmzettel_ungueltig</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='receivedInvalidVotes' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmzettel_leer</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='receivedEmptyVotes' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmzettel_gueltig</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='receivedValidVotes' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>yes_votes</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfYesVotes' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>no_votes</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfNoVotes' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>stimmen_ohne_antwort</name>
+        <xpath>*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotesWithoutAnswer' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+      <field>
+        <name>resultatfelder_eindeutig</name>
+        <xpath>count(../*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(../*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='mainVoteIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(../*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='otherIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='idName' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='idBund']/*[local-name()='id' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(../*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='domainOfInfluence' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='domainOfInfluenceType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0155/5']) &lt;= 1 and count(../*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='domainOfInfluence' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='domainOfInfluenceIdentification' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0155/5']) &lt;= 1 and count(../*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteTitleInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='language' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='de']/*[local-name()='voteTitle' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(../*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteTitleInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='language' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='de']/*[local-name()='voteTitleShort' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(../*[local-name()='vote' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voteSubType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='countingCircle' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='domainOfInfluenceType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='countingCircle' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countingCircleId' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='countingCircle' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countingCircleName' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotersInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotersTotal' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotersInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='subtotalInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='voterType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='1' and not(*[local-name()='sex' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])]/*[local-name()='countOfVoters' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotersInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='subtotalInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='voterType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='2' and not(*[local-name()='sex' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])]/*[local-name()='countOfVoters' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotersInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='subtotalInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='sex' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='1' and not(*[local-name()='voterType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])]/*[local-name()='countOfVoters' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotersInformation' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='subtotalInfo' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'][*[local-name()='sex' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']='2' and not(*[local-name()='voterType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1'])]/*[local-name()='countOfVoters' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='votingCardInformationType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotingCardsReceivedInBallotbox' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='votingCardInformationType' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotingCardsReceivedByMail' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='fullyCountedTrue' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='releasedTimeStamp' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='lockoutTimeStamp' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='voterTurnout' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='receivedVotes' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='receivedInvalidVotes' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='receivedEmptyVotes' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='receivedValidVotes' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfYesVotes' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfNoVotes' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1 and count(*[local-name()='resultData' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']/*[local-name()='countOfVotesWithoutAnswer' and namespace-uri()='http://www.ech.ch/xmlns/eCH-0252/1']) &lt;= 1</xpath>
+        <element_type>node</element_type>
+        <result_type>valueof</result_type>
+        <type>String</type>
+        <format />
+        <currency />
+        <decimal>.</decimal>
+        <group />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>both</trim_type>
+        <repeat>N</repeat>
+      </field>
+    </fields>
+  </transform>
+  <transform>
+    <name>Resultatfelder pruefen</name>
+    <type>Validator</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>1070</xloc>
+      <yloc>320</yloc>
+    </GUI>
+    <validate_all>N</validate_all>
+    <concat_errors>N</concat_errors>
+    <validator_field>
+      <validation_name>geschaeft_id</validation_name>
+      <name>geschaeft_id</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length>1</min_length>
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>geschaeft_id</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: geschaeft_id</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>titel</validation_name>
+      <name>titel</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length>1</min_length>
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>titel</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: titel</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>einflussbereich_id</validation_name>
+      <name>einflussbereich_id</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length>1</min_length>
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>einflussbereich_id</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: einflussbereich_id</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>gemeinde_name</validation_name>
+      <name>gemeinde_name</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length>1</min_length>
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>gemeinde_name</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: gemeinde_name</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>gemeinde_bfs_nr</validation_name>
+      <name>gemeinde_bfs_nr</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length>1</min_length>
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>gemeinde_bfs_nr</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: gemeinde_bfs_nr</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmberechtigte</validation_name>
+      <name>stimmberechtigte</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length>1</min_length>
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>stimmberechtigte</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: stimmberechtigte</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmzettel_eingegangen</validation_name>
+      <name>stimmzettel_eingegangen</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length>1</min_length>
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>stimmzettel_eingegangen</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: stimmzettel_eingegangen</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmzettel_ungueltig</validation_name>
+      <name>stimmzettel_ungueltig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length>1</min_length>
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>stimmzettel_ungueltig</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: stimmzettel_ungueltig</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmzettel_leer</validation_name>
+      <name>stimmzettel_leer</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length>1</min_length>
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>stimmzettel_leer</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: stimmzettel_leer</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmzettel_gueltig</validation_name>
+      <name>stimmzettel_gueltig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length>1</min_length>
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>stimmzettel_gueltig</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: stimmzettel_gueltig</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>yes_votes</validation_name>
+      <name>yes_votes</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length>1</min_length>
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>yes_votes</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: yes_votes</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>no_votes</validation_name>
+      <name>no_votes</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length>1</min_length>
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>no_votes</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: no_votes</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>gemeinde_bfs_nr_ziffern</validation_name>
+      <name>gemeinde_bfs_nr</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^[0-9]+$</regular_expression>
+      <error_code>gemeinde_bfs_nr</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: gemeinde_bfs_nr</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmberechtigte_ganze_zahl</validation_name>
+      <name>stimmberechtigte</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^0*[0-9]{1,7}$</regular_expression>
+      <error_code>stimmberechtigte</error_code>
+      <error_description>Anzahl ausserhalb des eCH-0252-Wertebereichs 0 bis 9999999: stimmberechtigte</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmberechtigte_schweizer_ganze_zahl</validation_name>
+      <name>stimmberechtigte_schweizer</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>Y</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^0*[0-9]{1,7}$</regular_expression>
+      <error_code>stimmberechtigte_schweizer</error_code>
+      <error_description>Anzahl ausserhalb des eCH-0252-Wertebereichs 0 bis 9999999: stimmberechtigte_schweizer</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmberechtigte_auslandschweizer_ganze_zahl</validation_name>
+      <name>stimmberechtigte_auslandschweizer</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>Y</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^0*[0-9]{1,7}$</regular_expression>
+      <error_code>stimmberechtigte_auslandschweizer</error_code>
+      <error_description>Anzahl ausserhalb des eCH-0252-Wertebereichs 0 bis 9999999: stimmberechtigte_auslandschweizer</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmberechtigte_maennlich_ganze_zahl</validation_name>
+      <name>stimmberechtigte_maennlich</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>Y</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^0*[0-9]{1,7}$</regular_expression>
+      <error_code>stimmberechtigte_maennlich</error_code>
+      <error_description>Anzahl ausserhalb des eCH-0252-Wertebereichs 0 bis 9999999: stimmberechtigte_maennlich</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmberechtigte_weiblich_ganze_zahl</validation_name>
+      <name>stimmberechtigte_weiblich</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>Y</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^0*[0-9]{1,7}$</regular_expression>
+      <error_code>stimmberechtigte_weiblich</error_code>
+      <error_description>Anzahl ausserhalb des eCH-0252-Wertebereichs 0 bis 9999999: stimmberechtigte_weiblich</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmrechtsausweise_urne_ganze_zahl</validation_name>
+      <name>stimmrechtsausweise_urne</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>Y</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^0*[0-9]{1,7}$</regular_expression>
+      <error_code>stimmrechtsausweise_urne</error_code>
+      <error_description>Anzahl ausserhalb des eCH-0252-Wertebereichs 0 bis 9999999: stimmrechtsausweise_urne</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmrechtsausweise_brieflich_ganze_zahl</validation_name>
+      <name>stimmrechtsausweise_brieflich</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>Y</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^0*[0-9]{1,7}$</regular_expression>
+      <error_code>stimmrechtsausweise_brieflich</error_code>
+      <error_description>Anzahl ausserhalb des eCH-0252-Wertebereichs 0 bis 9999999: stimmrechtsausweise_brieflich</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmzettel_eingegangen_ganze_zahl</validation_name>
+      <name>stimmzettel_eingegangen</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^0*[0-9]{1,7}$</regular_expression>
+      <error_code>stimmzettel_eingegangen</error_code>
+      <error_description>Anzahl ausserhalb des eCH-0252-Wertebereichs 0 bis 9999999: stimmzettel_eingegangen</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmzettel_ungueltig_ganze_zahl</validation_name>
+      <name>stimmzettel_ungueltig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^0*[0-9]{1,7}$</regular_expression>
+      <error_code>stimmzettel_ungueltig</error_code>
+      <error_description>Anzahl ausserhalb des eCH-0252-Wertebereichs 0 bis 9999999: stimmzettel_ungueltig</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmzettel_leer_ganze_zahl</validation_name>
+      <name>stimmzettel_leer</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^0*[0-9]{1,7}$</regular_expression>
+      <error_code>stimmzettel_leer</error_code>
+      <error_description>Anzahl ausserhalb des eCH-0252-Wertebereichs 0 bis 9999999: stimmzettel_leer</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmzettel_gueltig_ganze_zahl</validation_name>
+      <name>stimmzettel_gueltig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^0*[0-9]{1,7}$</regular_expression>
+      <error_code>stimmzettel_gueltig</error_code>
+      <error_description>Anzahl ausserhalb des eCH-0252-Wertebereichs 0 bis 9999999: stimmzettel_gueltig</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>yes_votes_ganze_zahl</validation_name>
+      <name>yes_votes</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^0*[0-9]{1,7}$</regular_expression>
+      <error_code>yes_votes</error_code>
+      <error_description>Anzahl ausserhalb des eCH-0252-Wertebereichs 0 bis 9999999: yes_votes</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>no_votes_ganze_zahl</validation_name>
+      <name>no_votes</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^0*[0-9]{1,7}$</regular_expression>
+      <error_code>no_votes</error_code>
+      <error_description>Anzahl ausserhalb des eCH-0252-Wertebereichs 0 bis 9999999: no_votes</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmen_ohne_antwort_ganze_zahl</validation_name>
+      <name>stimmen_ohne_antwort</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>Y</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^0*[0-9]{1,7}$</regular_expression>
+      <error_code>stimmen_ohne_antwort</error_code>
+      <error_description>Anzahl ausserhalb des eCH-0252-Wertebereichs 0 bis 9999999: stimmen_ohne_antwort</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmberechtigte_schweizer_eindeutig</validation_name>
+      <name>stimmberechtigte_schweizer_eindeutig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>stimmberechtigte_schweizer_eindeutig</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: stimmberechtigte_schweizer_eindeutig</error_description>
+      <allowed_value>
+        <value>true</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmberechtigte_auslandschweizer_eindeutig</validation_name>
+      <name>stimmberechtigte_auslandschweizer_eindeutig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>stimmberechtigte_auslandschweizer_eindeutig</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: stimmberechtigte_auslandschweizer_eindeutig</error_description>
+      <allowed_value>
+        <value>true</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmberechtigte_maennlich_eindeutig</validation_name>
+      <name>stimmberechtigte_maennlich_eindeutig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>stimmberechtigte_maennlich_eindeutig</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: stimmberechtigte_maennlich_eindeutig</error_description>
+      <allowed_value>
+        <value>true</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmberechtigte_weiblich_eindeutig</validation_name>
+      <name>stimmberechtigte_weiblich_eindeutig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>stimmberechtigte_weiblich_eindeutig</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: stimmberechtigte_weiblich_eindeutig</error_description>
+      <allowed_value>
+        <value>true</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>resultatfelder_eindeutig</validation_name>
+      <name>resultatfelder_eindeutig</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>resultatfelder_eindeutig</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: resultatfelder_eindeutig</error_description>
+      <allowed_value>
+        <value>true</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>ebene_code</validation_name>
+      <name>ebene_code</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>ebene_code</error_code>
+      <error_description>Unbekannter oder fehlender Code: ebene_code</error_description>
+      <allowed_value>
+        <value>CH</value>
+        <value>CT</value>
+        <value>MU</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>geschaeftstyp_code</validation_name>
+      <name>geschaeftstyp_code</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>geschaeftstyp_code</error_code>
+      <error_description>Unbekannter oder fehlender Code: geschaeftstyp_code</error_description>
+      <allowed_value>
+        <value>1</value>
+        <value>2</value>
+        <value>3</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>auszaehlkreis_code</validation_name>
+      <name>auszaehlkreis_code</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>auszaehlkreis_code</error_code>
+      <error_description>Nur Gemeinde-Auszaehlkreise (MU) werden unterstuetzt.</error_description>
+      <allowed_value>
+        <value>MU</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>fully_counted_code</validation_name>
+      <name>fully_counted_code</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>fully_counted_code</error_code>
+      <error_description>Unbekannter oder fehlender Code: fully_counted_code</error_description>
+      <allowed_value>
+        <value>true</value>
+        <value>false</value>
+        <value>1</value>
+        <value>0</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmbeteiligung_prozent</validation_name>
+      <name>stimmbeteiligung_prozent</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>Y</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^[0-9]+(\.[0-9]+)?$</regular_expression>
+      <error_code>stimmbeteiligung_prozent</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: stimmbeteiligung_prozent</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>freigegeben_am</validation_name>
+      <name>freigegeben_am</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>Y</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})$</regular_expression>
+      <error_code>freigegeben_am</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: freigegeben_am</error_description>
+    </validator_field>
+    <validator_field>
+      <validation_name>gesperrt_am</validation_name>
+      <name>gesperrt_am</name>
+      <data_type>String</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>Y</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression>^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(Z|[+-]\d{2}:\d{2})$</regular_expression>
+      <error_code>gesperrt_am</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: gesperrt_am</error_description>
+    </validator_field>
+  </transform>
+  <transform>
+    <name>Zahlen und Zeitstempel typisieren</name>
+    <type>SelectValues</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>860</xloc>
+      <yloc>320</yloc>
+    </GUI>
+    <fields>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>stimmberechtigte</name>
+        <rename>stimmberechtigte</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>0</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+      <meta>
+        <name>stimmberechtigte_schweizer</name>
+        <rename>stimmberechtigte_schweizer</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>0</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+      <meta>
+        <name>stimmberechtigte_auslandschweizer</name>
+        <rename>stimmberechtigte_auslandschweizer</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>0</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+      <meta>
+        <name>stimmberechtigte_maennlich</name>
+        <rename>stimmberechtigte_maennlich</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>0</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+      <meta>
+        <name>stimmberechtigte_weiblich</name>
+        <rename>stimmberechtigte_weiblich</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>0</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+      <meta>
+        <name>stimmrechtsausweise_urne</name>
+        <rename>stimmrechtsausweise_urne</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>0</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+      <meta>
+        <name>stimmrechtsausweise_brieflich</name>
+        <rename>stimmrechtsausweise_brieflich</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>0</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+      <meta>
+        <name>stimmzettel_eingegangen</name>
+        <rename>stimmzettel_eingegangen</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>0</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+      <meta>
+        <name>stimmzettel_ungueltig</name>
+        <rename>stimmzettel_ungueltig</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>0</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+      <meta>
+        <name>stimmzettel_leer</name>
+        <rename>stimmzettel_leer</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>0</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+      <meta>
+        <name>stimmzettel_gueltig</name>
+        <rename>stimmzettel_gueltig</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>0</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+      <meta>
+        <name>yes_votes</name>
+        <rename>yes_votes</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>0</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+      <meta>
+        <name>no_votes</name>
+        <rename>no_votes</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>0</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+      <meta>
+        <name>stimmen_ohne_antwort</name>
+        <rename>stimmen_ohne_antwort</rename>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>0</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+      <meta>
+        <name>stimmbeteiligung_prozent</name>
+        <rename>stimmbeteiligung_prozent</rename>
+        <type>BigNumber</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>0.################</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+      <meta>
+        <name>freigegeben_am</name>
+        <rename>freigegeben_am</rename>
+        <type>Date</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>yyyy-MM-dd'T'HH:mm:ssXXX</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+      <meta>
+        <name>gesperrt_am</name>
+        <rename>gesperrt_am</rename>
+        <type>Date</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <storage_type>normal</storage_type>
+        <conversion_mask>yyyy-MM-dd'T'HH:mm:ssXXX</conversion_mask>
+        <date_format_lenient>N</date_format_lenient>
+        <date_format_locale>en_US</date_format_locale>
+        <date_format_timezone>GMT+01:00</date_format_timezone>
+        <lenient_string_to_number>N</lenient_string_to_number>
+        <decimal_symbol>.</decimal_symbol>
+        <grouping_symbol />
+      </meta>
+    </fields>
+  </transform>
+  <transform>
+    <name>Pruefwert Null</name>
+    <type>Constant</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>660</xloc>
+      <yloc>320</yloc>
+    </GUI>
+    <fields>
+      <field>
+        <name>pruef_null</name>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif>0</nullif>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+  </transform>
+  <transform>
+    <name>Geschaeftsgruppe und Pruefwert</name>
+    <type>Coalesce</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>460</xloc>
+      <yloc>320</yloc>
+    </GUI>
+    <empty_is_null>Y</empty_is_null>
+    <fields>
+      <field>
+        <name>geschaeftsgruppe_id</name>
+        <type>String</type>
+        <input>hauptgeschaeft_id, geschaeft_id</input>
+        <remove>N</remove>
+      </field>
+      <field>
+        <name>pruef_ohne_antwort</name>
+        <type>Integer</type>
+        <input>stimmen_ohne_antwort, pruef_null</input>
+        <remove>N</remove>
+      </field>
+    </fields>
+  </transform>
+  <transform>
+    <name>Stimmensummen berechnen</name>
+    <type>Calculator</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>250</xloc>
+      <yloc>320</yloc>
+    </GUI>
+    <calculation>
+      <field_name>pruef_stimmzettel</field_name>
+      <calc_type>ADD3</calc_type>
+      <field_a>stimmzettel_ungueltig</field_a>
+      <field_b>stimmzettel_leer</field_b>
+      <field_c>stimmzettel_gueltig</field_c>
+      <value_type>Integer</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+    </calculation>
+    <calculation>
+      <field_name>pruef_antworten</field_name>
+      <calc_type>ADD3</calc_type>
+      <field_a>yes_votes</field_a>
+      <field_b>no_votes</field_b>
+      <field_c>pruef_ohne_antwort</field_c>
+      <value_type>Integer</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+    </calculation>
+    <calculation>
+      <field_name>differenz_stimmzettel</field_name>
+      <calc_type>SUBTRACT</calc_type>
+      <field_a>stimmzettel_eingegangen</field_a>
+      <field_b>pruef_stimmzettel</field_b>
+      <field_c />
+      <value_type>Integer</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+    </calculation>
+    <calculation>
+      <field_name>differenz_antworten</field_name>
+      <calc_type>SUBTRACT</calc_type>
+      <field_a>stimmzettel_gueltig</field_a>
+      <field_b>pruef_antworten</field_b>
+      <field_c />
+      <value_type>Integer</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <remove>N</remove>
+    </calculation>
+  </transform>
+  <transform>
+    <name>Stimmensummen pruefen</name>
+    <type>Validator</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>100</xloc>
+      <yloc>480</yloc>
+    </GUI>
+    <validate_all>N</validate_all>
+    <concat_errors>N</concat_errors>
+    <validator_field>
+      <validation_name>differenz_stimmzettel</validation_name>
+      <name>differenz_stimmzettel</name>
+      <data_type>Integer</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>differenz_stimmzettel</error_code>
+      <error_description>Eingegangene Stimmzettel entsprechen nicht ungueltig + leer + gueltig.</error_description>
+      <allowed_value>
+        <value>0</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>differenz_antworten</validation_name>
+      <name>differenz_antworten</name>
+      <data_type>Integer</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>N</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask />
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value />
+      <max_value />
+      <regular_expression />
+      <error_code>differenz_antworten</error_code>
+      <error_description>Gueltige Stimmzettel entsprechen nicht beiden Stimmenzahlen + ohne Antwort.</error_description>
+      <allowed_value>
+        <value>0</value>
+      </allowed_value>
+    </validator_field>
+    <validator_field>
+      <validation_name>stimmbeteiligung_prozent</validation_name>
+      <name>stimmbeteiligung_prozent</name>
+      <data_type>BigNumber</data_type>
+      <data_type_verified>Y</data_type_verified>
+      <null_allowed>Y</null_allowed>
+      <only_null_allowed>N</only_null_allowed>
+      <only_numeric_allowed>N</only_numeric_allowed>
+      <is_sourcing_values>N</is_sourcing_values>
+      <min_length />
+      <max_length />
+      <conversion_mask>0.################</conversion_mask>
+      <decimal_symbol>.</decimal_symbol>
+      <grouping_symbol />
+      <min_value>0</min_value>
+      <max_value>100</max_value>
+      <regular_expression />
+      <error_code>stimmbeteiligung_prozent</error_code>
+      <error_description>Ungueltiger Wert oder fehlendes Pflichtfeld: stimmbeteiligung_prozent</error_description>
+    </validator_field>
+  </transform>
+  <transform>
+    <name>Nur Bund und Kanton</name>
+    <type>FilterRows</type>
+    <description>Filtert nach der Ebene des Geschaefts, nicht nach dem Gemeinde-Auszaehlkreis. Alle Eingabezeilen wurden zuvor geprueft.</description>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>290</xloc>
+      <yloc>480</yloc>
+    </GUI>
+    <send_true_to>Ebene benennen</send_true_to>
+    <send_false_to>Gemeindeabstimmungen verwerfen</send_false_to>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>ebene_code</leftvalue>
+        <function>IN LIST</function>
+        <rightvalue />
+        <value>
+          <name>constant</name>
+          <type>String</type>
+          <text>CH;CT</text>
+          <length>-1</length>
+          <precision>-1</precision>
+          <isnull>N</isnull>
+        </value>
+      </condition>
+    </compare>
+  </transform>
+  <transform>
+    <name>Gemeindeabstimmungen verwerfen</name>
+    <type>Dummy</type>
+    <description>Absichtlicher Endpunkt fuer reine Gemeindeabstimmungen (Geschaeftsebene MU); keine CSV-Zeile.</description>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>290</xloc>
+      <yloc>620</yloc>
+    </GUI>
+  </transform>
+  <transform>
+    <name>Ebene benennen</name>
+    <type>ValueMapper</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>490</xloc>
+      <yloc>480</yloc>
+    </GUI>
+    <field_to_use>ebene_code</field_to_use>
+    <target_field>ebene</target_field>
+    <non_match_default />
+    <fields>
+      <field>
+        <source_value>CH</source_value>
+        <target_value>bund</target_value>
+      </field>
+      <field>
+        <source_value>CT</source_value>
+        <target_value>kanton</target_value>
+      </field>
+    </fields>
+  </transform>
+  <transform>
+    <name>Geschaeftstyp benennen</name>
+    <type>ValueMapper</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>680</xloc>
+      <yloc>480</yloc>
+    </GUI>
+    <field_to_use>geschaeftstyp_code</field_to_use>
+    <target_field>geschaeftstyp</target_field>
+    <non_match_default />
+    <fields>
+      <field>
+        <source_value>1</source_value>
+        <target_value>vorlage</target_value>
+      </field>
+      <field>
+        <source_value>2</source_value>
+        <target_value>gegenvorschlag</target_value>
+      </field>
+      <field>
+        <source_value>3</source_value>
+        <target_value>stichfrage</target_value>
+      </field>
+    </fields>
+  </transform>
+  <transform>
+    <name>Auszaehlstatus benennen</name>
+    <type>ValueMapper</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>870</xloc>
+      <yloc>480</yloc>
+    </GUI>
+    <field_to_use>fully_counted_code</field_to_use>
+    <target_field>vollstaendig_ausgezaehlt</target_field>
+    <non_match_default />
+    <fields>
+      <field>
+        <source_value>true</source_value>
+        <target_value>true</target_value>
+      </field>
+      <field>
+        <source_value>false</source_value>
+        <target_value>false</target_value>
+      </field>
+      <field>
+        <source_value>1</source_value>
+        <target_value>true</target_value>
+      </field>
+      <field>
+        <source_value>0</source_value>
+        <target_value>false</target_value>
+      </field>
+    </fields>
+  </transform>
+  <transform>
+    <name>Dateiname bilden</name>
+    <type>ConcatFields</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>1060</xloc>
+      <yloc>480</yloc>
+    </GUI>
+    <ConcatFields>
+      <targetFieldName>output_file</targetFieldName>
+      <targetFieldLength>-1</targetFieldLength>
+      <removeSelectedFields>N</removeSelectedFields>
+    </ConcatFields>
+    <separator />
+    <enclosure />
+    <fields>
+      <field>
+        <name>output_prefix</name>
+        <type>String</type>
+        <format />
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+      <field>
+        <name>abstimmungstag</name>
+        <type>Date</type>
+        <format>yyyy-MM-dd</format>
+        <length>-1</length>
+        <precision>-1</precision>
+        <trim_type>none</trim_type>
+      </field>
+    </fields>
+  </transform>
+  <transform>
+    <name>Stimmen zuordnen</name>
+    <type>SwitchCase</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>1270</xloc>
+      <yloc>480</yloc>
+    </GUI>
+    <fieldname>geschaeftstyp_code</fieldname>
+    <use_contains>N</use_contains>
+    <case_value_type>String</case_value_type>
+    <default_target_transform>Unbekannter Geschaeftstyp</default_target_transform>
+    <cases>
+      <case>
+        <value>1</value>
+        <target_transform>Ja-Nein-Spalten</target_transform>
+      </case>
+      <case>
+        <value>2</value>
+        <target_transform>Ja-Nein-Spalten</target_transform>
+      </case>
+      <case>
+        <value>3</value>
+        <target_transform>Stichfrage-Spalten</target_transform>
+      </case>
+    </cases>
+  </transform>
+  <transform>
+    <name>Ja-Nein-Spalten</name>
+    <type>SelectValues</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>1480</xloc>
+      <yloc>390</yloc>
+    </GUI>
+    <fields>
+      <field>
+        <name>abstimmungstag</name>
+        <rename>abstimmungstag</rename>
+      </field>
+      <field>
+        <name>geschaeft_id</name>
+        <rename>geschaeft_id</rename>
+      </field>
+      <field>
+        <name>hauptgeschaeft_id</name>
+        <rename>hauptgeschaeft_id</rename>
+      </field>
+      <field>
+        <name>geschaeftsgruppe_id</name>
+        <rename>geschaeftsgruppe_id</rename>
+      </field>
+      <field>
+        <name>bund_id</name>
+        <rename>bund_id</rename>
+      </field>
+      <field>
+        <name>ebene</name>
+        <rename>ebene</rename>
+      </field>
+      <field>
+        <name>einflussbereich_id</name>
+        <rename>einflussbereich_id</rename>
+      </field>
+      <field>
+        <name>titel</name>
+        <rename>titel</rename>
+      </field>
+      <field>
+        <name>kurztitel</name>
+        <rename>kurztitel</rename>
+      </field>
+      <field>
+        <name>geschaeftstyp</name>
+        <rename>geschaeftstyp</rename>
+      </field>
+      <field>
+        <name>gemeinde_bfs_nr</name>
+        <rename>gemeinde_bfs_nr</rename>
+      </field>
+      <field>
+        <name>gemeinde_name</name>
+        <rename>gemeinde_name</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte</name>
+        <rename>stimmberechtigte</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte_schweizer</name>
+        <rename>stimmberechtigte_schweizer</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte_auslandschweizer</name>
+        <rename>stimmberechtigte_auslandschweizer</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte_maennlich</name>
+        <rename>stimmberechtigte_maennlich</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte_weiblich</name>
+        <rename>stimmberechtigte_weiblich</rename>
+      </field>
+      <field>
+        <name>stimmrechtsausweise_urne</name>
+        <rename>stimmrechtsausweise_urne</rename>
+      </field>
+      <field>
+        <name>stimmrechtsausweise_brieflich</name>
+        <rename>stimmrechtsausweise_brieflich</rename>
+      </field>
+      <field>
+        <name>vollstaendig_ausgezaehlt</name>
+        <rename>vollstaendig_ausgezaehlt</rename>
+      </field>
+      <field>
+        <name>freigegeben_am</name>
+        <rename>freigegeben_am</rename>
+      </field>
+      <field>
+        <name>gesperrt_am</name>
+        <rename>gesperrt_am</rename>
+      </field>
+      <field>
+        <name>stimmbeteiligung_prozent</name>
+        <rename>stimmbeteiligung_prozent</rename>
+      </field>
+      <field>
+        <name>stimmzettel_eingegangen</name>
+        <rename>stimmzettel_eingegangen</rename>
+      </field>
+      <field>
+        <name>stimmzettel_ungueltig</name>
+        <rename>stimmzettel_ungueltig</rename>
+      </field>
+      <field>
+        <name>stimmzettel_leer</name>
+        <rename>stimmzettel_leer</rename>
+      </field>
+      <field>
+        <name>stimmzettel_gueltig</name>
+        <rename>stimmzettel_gueltig</rename>
+      </field>
+      <field>
+        <name>stimmen_ohne_antwort</name>
+        <rename>stimmen_ohne_antwort</rename>
+      </field>
+      <field>
+        <name>yes_votes</name>
+        <rename>ja_stimmen</rename>
+      </field>
+      <field>
+        <name>no_votes</name>
+        <rename>nein_stimmen</rename>
+      </field>
+      <field>
+        <name>output_file</name>
+        <rename>output_file</rename>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+  </transform>
+  <transform>
+    <name>Ja-Nein-NULLs</name>
+    <type>Constant</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>1680</xloc>
+      <yloc>390</yloc>
+    </GUI>
+    <fields>
+      <field>
+        <name>stichfrage_hauptvorlage_stimmen</name>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>stichfrage_gegenvorschlag_stimmen</name>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+  </transform>
+  <transform>
+    <name>Ja-Nein-Schema</name>
+    <type>SelectValues</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>1880</xloc>
+      <yloc>390</yloc>
+    </GUI>
+    <fields>
+      <field>
+        <name>abstimmungstag</name>
+        <rename>abstimmungstag</rename>
+      </field>
+      <field>
+        <name>geschaeft_id</name>
+        <rename>geschaeft_id</rename>
+      </field>
+      <field>
+        <name>hauptgeschaeft_id</name>
+        <rename>hauptgeschaeft_id</rename>
+      </field>
+      <field>
+        <name>geschaeftsgruppe_id</name>
+        <rename>geschaeftsgruppe_id</rename>
+      </field>
+      <field>
+        <name>bund_id</name>
+        <rename>bund_id</rename>
+      </field>
+      <field>
+        <name>ebene</name>
+        <rename>ebene</rename>
+      </field>
+      <field>
+        <name>einflussbereich_id</name>
+        <rename>einflussbereich_id</rename>
+      </field>
+      <field>
+        <name>titel</name>
+        <rename>titel</rename>
+      </field>
+      <field>
+        <name>kurztitel</name>
+        <rename>kurztitel</rename>
+      </field>
+      <field>
+        <name>geschaeftstyp</name>
+        <rename>geschaeftstyp</rename>
+      </field>
+      <field>
+        <name>gemeinde_bfs_nr</name>
+        <rename>gemeinde_bfs_nr</rename>
+      </field>
+      <field>
+        <name>gemeinde_name</name>
+        <rename>gemeinde_name</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte</name>
+        <rename>stimmberechtigte</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte_schweizer</name>
+        <rename>stimmberechtigte_schweizer</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte_auslandschweizer</name>
+        <rename>stimmberechtigte_auslandschweizer</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte_maennlich</name>
+        <rename>stimmberechtigte_maennlich</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte_weiblich</name>
+        <rename>stimmberechtigte_weiblich</rename>
+      </field>
+      <field>
+        <name>stimmrechtsausweise_urne</name>
+        <rename>stimmrechtsausweise_urne</rename>
+      </field>
+      <field>
+        <name>stimmrechtsausweise_brieflich</name>
+        <rename>stimmrechtsausweise_brieflich</rename>
+      </field>
+      <field>
+        <name>vollstaendig_ausgezaehlt</name>
+        <rename>vollstaendig_ausgezaehlt</rename>
+      </field>
+      <field>
+        <name>freigegeben_am</name>
+        <rename>freigegeben_am</rename>
+      </field>
+      <field>
+        <name>gesperrt_am</name>
+        <rename>gesperrt_am</rename>
+      </field>
+      <field>
+        <name>stimmbeteiligung_prozent</name>
+        <rename>stimmbeteiligung_prozent</rename>
+      </field>
+      <field>
+        <name>stimmzettel_eingegangen</name>
+        <rename>stimmzettel_eingegangen</rename>
+      </field>
+      <field>
+        <name>stimmzettel_ungueltig</name>
+        <rename>stimmzettel_ungueltig</rename>
+      </field>
+      <field>
+        <name>stimmzettel_leer</name>
+        <rename>stimmzettel_leer</rename>
+      </field>
+      <field>
+        <name>stimmzettel_gueltig</name>
+        <rename>stimmzettel_gueltig</rename>
+      </field>
+      <field>
+        <name>ja_stimmen</name>
+        <rename>ja_stimmen</rename>
+      </field>
+      <field>
+        <name>nein_stimmen</name>
+        <rename>nein_stimmen</rename>
+      </field>
+      <field>
+        <name>stichfrage_hauptvorlage_stimmen</name>
+        <rename>stichfrage_hauptvorlage_stimmen</rename>
+      </field>
+      <field>
+        <name>stichfrage_gegenvorschlag_stimmen</name>
+        <rename>stichfrage_gegenvorschlag_stimmen</rename>
+      </field>
+      <field>
+        <name>stimmen_ohne_antwort</name>
+        <rename>stimmen_ohne_antwort</rename>
+      </field>
+      <field>
+        <name>output_file</name>
+        <rename>output_file</rename>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+  </transform>
+  <transform>
+    <name>Stichfrage-Spalten</name>
+    <type>SelectValues</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>1480</xloc>
+      <yloc>600</yloc>
+    </GUI>
+    <fields>
+      <field>
+        <name>abstimmungstag</name>
+        <rename>abstimmungstag</rename>
+      </field>
+      <field>
+        <name>geschaeft_id</name>
+        <rename>geschaeft_id</rename>
+      </field>
+      <field>
+        <name>hauptgeschaeft_id</name>
+        <rename>hauptgeschaeft_id</rename>
+      </field>
+      <field>
+        <name>geschaeftsgruppe_id</name>
+        <rename>geschaeftsgruppe_id</rename>
+      </field>
+      <field>
+        <name>bund_id</name>
+        <rename>bund_id</rename>
+      </field>
+      <field>
+        <name>ebene</name>
+        <rename>ebene</rename>
+      </field>
+      <field>
+        <name>einflussbereich_id</name>
+        <rename>einflussbereich_id</rename>
+      </field>
+      <field>
+        <name>titel</name>
+        <rename>titel</rename>
+      </field>
+      <field>
+        <name>kurztitel</name>
+        <rename>kurztitel</rename>
+      </field>
+      <field>
+        <name>geschaeftstyp</name>
+        <rename>geschaeftstyp</rename>
+      </field>
+      <field>
+        <name>gemeinde_bfs_nr</name>
+        <rename>gemeinde_bfs_nr</rename>
+      </field>
+      <field>
+        <name>gemeinde_name</name>
+        <rename>gemeinde_name</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte</name>
+        <rename>stimmberechtigte</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte_schweizer</name>
+        <rename>stimmberechtigte_schweizer</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte_auslandschweizer</name>
+        <rename>stimmberechtigte_auslandschweizer</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte_maennlich</name>
+        <rename>stimmberechtigte_maennlich</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte_weiblich</name>
+        <rename>stimmberechtigte_weiblich</rename>
+      </field>
+      <field>
+        <name>stimmrechtsausweise_urne</name>
+        <rename>stimmrechtsausweise_urne</rename>
+      </field>
+      <field>
+        <name>stimmrechtsausweise_brieflich</name>
+        <rename>stimmrechtsausweise_brieflich</rename>
+      </field>
+      <field>
+        <name>vollstaendig_ausgezaehlt</name>
+        <rename>vollstaendig_ausgezaehlt</rename>
+      </field>
+      <field>
+        <name>freigegeben_am</name>
+        <rename>freigegeben_am</rename>
+      </field>
+      <field>
+        <name>gesperrt_am</name>
+        <rename>gesperrt_am</rename>
+      </field>
+      <field>
+        <name>stimmbeteiligung_prozent</name>
+        <rename>stimmbeteiligung_prozent</rename>
+      </field>
+      <field>
+        <name>stimmzettel_eingegangen</name>
+        <rename>stimmzettel_eingegangen</rename>
+      </field>
+      <field>
+        <name>stimmzettel_ungueltig</name>
+        <rename>stimmzettel_ungueltig</rename>
+      </field>
+      <field>
+        <name>stimmzettel_leer</name>
+        <rename>stimmzettel_leer</rename>
+      </field>
+      <field>
+        <name>stimmzettel_gueltig</name>
+        <rename>stimmzettel_gueltig</rename>
+      </field>
+      <field>
+        <name>stimmen_ohne_antwort</name>
+        <rename>stimmen_ohne_antwort</rename>
+      </field>
+      <field>
+        <name>yes_votes</name>
+        <rename>stichfrage_hauptvorlage_stimmen</rename>
+      </field>
+      <field>
+        <name>no_votes</name>
+        <rename>stichfrage_gegenvorschlag_stimmen</rename>
+      </field>
+      <field>
+        <name>output_file</name>
+        <rename>output_file</rename>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+  </transform>
+  <transform>
+    <name>Stichfrage-NULLs</name>
+    <type>Constant</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>1680</xloc>
+      <yloc>600</yloc>
+    </GUI>
+    <fields>
+      <field>
+        <name>ja_stimmen</name>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+        <set_empty_string>N</set_empty_string>
+      </field>
+      <field>
+        <name>nein_stimmen</name>
+        <type>Integer</type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+  </transform>
+  <transform>
+    <name>Stichfrage-Schema</name>
+    <type>SelectValues</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>1880</xloc>
+      <yloc>600</yloc>
+    </GUI>
+    <fields>
+      <field>
+        <name>abstimmungstag</name>
+        <rename>abstimmungstag</rename>
+      </field>
+      <field>
+        <name>geschaeft_id</name>
+        <rename>geschaeft_id</rename>
+      </field>
+      <field>
+        <name>hauptgeschaeft_id</name>
+        <rename>hauptgeschaeft_id</rename>
+      </field>
+      <field>
+        <name>geschaeftsgruppe_id</name>
+        <rename>geschaeftsgruppe_id</rename>
+      </field>
+      <field>
+        <name>bund_id</name>
+        <rename>bund_id</rename>
+      </field>
+      <field>
+        <name>ebene</name>
+        <rename>ebene</rename>
+      </field>
+      <field>
+        <name>einflussbereich_id</name>
+        <rename>einflussbereich_id</rename>
+      </field>
+      <field>
+        <name>titel</name>
+        <rename>titel</rename>
+      </field>
+      <field>
+        <name>kurztitel</name>
+        <rename>kurztitel</rename>
+      </field>
+      <field>
+        <name>geschaeftstyp</name>
+        <rename>geschaeftstyp</rename>
+      </field>
+      <field>
+        <name>gemeinde_bfs_nr</name>
+        <rename>gemeinde_bfs_nr</rename>
+      </field>
+      <field>
+        <name>gemeinde_name</name>
+        <rename>gemeinde_name</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte</name>
+        <rename>stimmberechtigte</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte_schweizer</name>
+        <rename>stimmberechtigte_schweizer</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte_auslandschweizer</name>
+        <rename>stimmberechtigte_auslandschweizer</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte_maennlich</name>
+        <rename>stimmberechtigte_maennlich</rename>
+      </field>
+      <field>
+        <name>stimmberechtigte_weiblich</name>
+        <rename>stimmberechtigte_weiblich</rename>
+      </field>
+      <field>
+        <name>stimmrechtsausweise_urne</name>
+        <rename>stimmrechtsausweise_urne</rename>
+      </field>
+      <field>
+        <name>stimmrechtsausweise_brieflich</name>
+        <rename>stimmrechtsausweise_brieflich</rename>
+      </field>
+      <field>
+        <name>vollstaendig_ausgezaehlt</name>
+        <rename>vollstaendig_ausgezaehlt</rename>
+      </field>
+      <field>
+        <name>freigegeben_am</name>
+        <rename>freigegeben_am</rename>
+      </field>
+      <field>
+        <name>gesperrt_am</name>
+        <rename>gesperrt_am</rename>
+      </field>
+      <field>
+        <name>stimmbeteiligung_prozent</name>
+        <rename>stimmbeteiligung_prozent</rename>
+      </field>
+      <field>
+        <name>stimmzettel_eingegangen</name>
+        <rename>stimmzettel_eingegangen</rename>
+      </field>
+      <field>
+        <name>stimmzettel_ungueltig</name>
+        <rename>stimmzettel_ungueltig</rename>
+      </field>
+      <field>
+        <name>stimmzettel_leer</name>
+        <rename>stimmzettel_leer</rename>
+      </field>
+      <field>
+        <name>stimmzettel_gueltig</name>
+        <rename>stimmzettel_gueltig</rename>
+      </field>
+      <field>
+        <name>ja_stimmen</name>
+        <rename>ja_stimmen</rename>
+      </field>
+      <field>
+        <name>nein_stimmen</name>
+        <rename>nein_stimmen</rename>
+      </field>
+      <field>
+        <name>stichfrage_hauptvorlage_stimmen</name>
+        <rename>stichfrage_hauptvorlage_stimmen</rename>
+      </field>
+      <field>
+        <name>stichfrage_gegenvorschlag_stimmen</name>
+        <rename>stichfrage_gegenvorschlag_stimmen</rename>
+      </field>
+      <field>
+        <name>stimmen_ohne_antwort</name>
+        <rename>stimmen_ohne_antwort</rename>
+      </field>
+      <field>
+        <name>output_file</name>
+        <rename>output_file</rename>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+  </transform>
+  <transform>
+    <name>Unbekannter Geschaeftstyp</name>
+    <type>Abort</type>
+    <description />
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>1480</xloc>
+      <yloc>710</yloc>
+    </GUI>
+    <abort_option>ABORT_WITH_ERROR</abort_option>
+    <row_threshold>0</row_threshold>
+    <message>Unbekannter voteSubType; nur 1, 2 und 3 werden unterstuetzt.</message>
+    <always_log_rows>Y</always_log_rows>
+  </transform>
+  <transform>
+    <name>Resultate sortieren</name>
+    <type>SortRows</type>
+    <description>Puffert alle geprueften Zeilen; keine Deduplizierung. Bei Fehlern wird vor der Ausgabe abgebrochen.</description>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>2070</xloc>
+      <yloc>480</yloc>
+    </GUI>
+    <directory>${java.io.tmpdir}</directory>
+    <prefix>ech0252-sort</prefix>
+    <sort_size>100000</sort_size>
+    <compress>N</compress>
+    <unique_rows>N</unique_rows>
+    <fields>
+      <field>
+        <name>abstimmungstag</name>
+        <ascending>Y</ascending>
+        <case_sensitive>Y</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>geschaeft_id</name>
+        <ascending>Y</ascending>
+        <case_sensitive>Y</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+      <field>
+        <name>gemeinde_bfs_nr</name>
+        <ascending>Y</ascending>
+        <case_sensitive>Y</case_sensitive>
+        <collator_enabled>N</collator_enabled>
+        <collator_strength>0</collator_strength>
+        <presorted>N</presorted>
+      </field>
+    </fields>
+  </transform>
+  <transform>
+    <name>CSV schreiben</name>
+    <type>TextFileOutput</type>
+    <description>UTF-8 ohne BOM; Semikolon; echte NULLs leer; ISO-Datumswerte und festes GMT+01:00 fuer Zeitstempel.</description>
+    <distribute>Y</distribute>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+    </partitioning>
+    <GUI>
+      <xloc>2270</xloc>
+      <yloc>480</yloc>
+    </GUI>
+    <separator>;</separator>
+    <enclosure>"</enclosure>
+    <enclosure_forced>N</enclosure_forced>
+    <enclosure_fix_disabled>N</enclosure_fix_disabled>
+    <header>Y</header>
+    <footer>N</footer>
+    <format>UNIX</format>
+    <compression>None</compression>
+    <encoding>UTF-8</encoding>
+    <fileNameInField>Y</fileNameInField>
+    <fileNameField>output_file</fileNameField>
+    <create_parent_folder>N</create_parent_folder>
+    <file>
+      <name />
+      <extention>csv</extention>
+      <append>N</append>
+      <split>N</split>
+      <haspartno>N</haspartno>
+      <add_date>N</add_date>
+      <add_time>N</add_time>
+      <SpecifyFormat>N</SpecifyFormat>
+      <add_to_result_filenames>Y</add_to_result_filenames>
+      <pad>N</pad>
+      <fast_dump>N</fast_dump>
+      <splitevery>0</splitevery>
+      <do_not_open_new_file_init>Y</do_not_open_new_file_init>
+    </file>
+    <fields>
+      <field>
+        <name>abstimmungstag</name>
+        <type>Date</type>
+        <format>yyyy-MM-dd</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>geschaeft_id</name>
+        <type>String</type>
+        <format />
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>hauptgeschaeft_id</name>
+        <type>String</type>
+        <format />
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>geschaeftsgruppe_id</name>
+        <type>String</type>
+        <format />
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>bund_id</name>
+        <type>String</type>
+        <format />
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>ebene</name>
+        <type>String</type>
+        <format />
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>einflussbereich_id</name>
+        <type>String</type>
+        <format />
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>titel</name>
+        <type>String</type>
+        <format />
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>kurztitel</name>
+        <type>String</type>
+        <format />
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>geschaeftstyp</name>
+        <type>String</type>
+        <format />
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>gemeinde_bfs_nr</name>
+        <type>String</type>
+        <format />
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>gemeinde_name</name>
+        <type>String</type>
+        <format />
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>stimmberechtigte</name>
+        <type>Integer</type>
+        <format>0</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>stimmberechtigte_schweizer</name>
+        <type>Integer</type>
+        <format>0</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>stimmberechtigte_auslandschweizer</name>
+        <type>Integer</type>
+        <format>0</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>stimmberechtigte_maennlich</name>
+        <type>Integer</type>
+        <format>0</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>stimmberechtigte_weiblich</name>
+        <type>Integer</type>
+        <format>0</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>stimmrechtsausweise_urne</name>
+        <type>Integer</type>
+        <format>0</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>stimmrechtsausweise_brieflich</name>
+        <type>Integer</type>
+        <format>0</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>vollstaendig_ausgezaehlt</name>
+        <type>String</type>
+        <format />
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>freigegeben_am</name>
+        <type>Date</type>
+        <format>yyyy-MM-dd'T'HH:mm:ssXXX</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>gesperrt_am</name>
+        <type>Date</type>
+        <format>yyyy-MM-dd'T'HH:mm:ssXXX</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>stimmbeteiligung_prozent</name>
+        <type>BigNumber</type>
+        <format>0.################</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>stimmzettel_eingegangen</name>
+        <type>Integer</type>
+        <format>0</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>stimmzettel_ungueltig</name>
+        <type>Integer</type>
+        <format>0</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>stimmzettel_leer</name>
+        <type>Integer</type>
+        <format>0</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>stimmzettel_gueltig</name>
+        <type>Integer</type>
+        <format>0</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>ja_stimmen</name>
+        <type>Integer</type>
+        <format>0</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>nein_stimmen</name>
+        <type>Integer</type>
+        <format>0</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>stichfrage_hauptvorlage_stimmen</name>
+        <type>Integer</type>
+        <format>0</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>stichfrage_gegenvorschlag_stimmen</name>
+        <type>Integer</type>
+        <format>0</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+      <field>
+        <name>stimmen_ohne_antwort</name>
+        <type>Integer</type>
+        <format>0</format>
+        <decimal>.</decimal>
+        <group />
+        <trim_type>none</trim_type>
+        <length>-1</length>
+        <precision>-1</precision>
+        <nullif />
+      </field>
+    </fields>
+  </transform>
+</pipeline>

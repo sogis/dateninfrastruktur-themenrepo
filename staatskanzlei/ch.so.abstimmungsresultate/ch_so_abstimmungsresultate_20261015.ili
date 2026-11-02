@@ -1,0 +1,38 @@
+INTERLIS 2.4;
+
+MODEL ch_so_abstimmungsresultate_20261015 (de) AT "https://geo.so.ch/models/ch.so.abstimmungsresultate_20261015.ili" VERSION "2026-10-15" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      abstimmungstag : MANDATORY INTERLIS.XMLDate;
+      geschaeft_id : MANDATORY TEXT*50;
+      hauptgeschaeft_id : TEXT*50;
+      geschaeftsgruppe_id : MANDATORY TEXT*50;
+      bund_id : TEXT*20;
+      ebene : MANDATORY TEXT*20;
+      einflussbereich_id : MANDATORY TEXT*20;
+      titel : MANDATORY TEXT*500;
+      kurztitel : TEXT*200;
+      geschaeftstyp : MANDATORY TEXT*20;
+      gemeinde_bfs_nr : MANDATORY TEXT*10;
+      gemeinde_name : MANDATORY TEXT*100;
+      stimmberechtigte : MANDATORY 0 .. 999999;
+      stimmberechtigte_schweizer : 0 .. 999999;
+      stimmberechtigte_auslandschweizer : 0 .. 999999;
+      stimmberechtigte_maennlich : 0 .. 999999;
+      stimmberechtigte_weiblich : 0 .. 999999;
+      stimmrechtsausweise_urne : 0 .. 999999;
+      stimmrechtsausweise_brieflich : 0 .. 999999;
+      stimmbeteiligung_prozent : 0 .. 100;
+      stimmzettel_eingegangen : MANDATORY 0 .. 999999;
+      stimmzettel_ungueltig : MANDATORY 0 .. 999999;
+      stimmzettel_leer : MANDATORY 0 .. 999999;
+      stimmzettel_gueltig : MANDATORY 0 .. 999999;
+      ja_stimmen : 0 .. 999999;
+      nein_stimmen : 0 .. 999999;
+      stichfrage_hauptvorlage_stimmen : 0 .. 999999;
+      stichfrage_gegenvorschlag_stimmen : 0 .. 999999;
+      stimmen_ohne_antwort : 0 .. 999999;
+    END Observation;
+  END Data;
+END ch_so_abstimmungsresultate_20261015.

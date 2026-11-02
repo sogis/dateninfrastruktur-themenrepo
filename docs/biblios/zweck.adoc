@@ -1,0 +1,45 @@
+= Zweck des Themenrepos
+:page-layout: docs
+:toc: macro
+:toclevels: 2
+
+== Rolle im Gesamtsystem
+
+Das Themenrepo ist die fachliche Quelle für das Jenkins-Plugin. Es enthält nicht das Plugin selbst. Stattdessen liefert es dem Plugin die Informationen, aus denen Jenkins-Jobs und das Datenportal-Startformular aufgebaut werden.
+
+Das Repository beantwortet aus Sicht des Plugins drei Fragen:
+
+. Welche Organisationen gibt es?
+. Welche Datensätze gehören zu diesen Organisationen?
+. Welche gemeinsamen und organisationsspezifischen Ausführungsregeln gelten?
+
+== Abgrenzung zu anderen Repositories
+
+Das Themenrepo ist ein Consumer des Betriebs- und Plugin-Setups. Der Jenkins-Controller und das Dockerimage werden im Repo `datenportal-jenkins-dev` vorbereitet. Das Jenkins-Plugin wird im Repo `datenportal-jenkins-gretl-plugin` entwickelt. Das Themenrepo selbst enthält den fachlichen Input für diese Infrastruktur.
+
+[cols="1,2",options="header"]
+|===
+| Repository | Rolle 
+
+| `datenportal-themenrepo`
+| Organisationen, Datensätze, Shared Defaults, Gradle-Build-Vertrag
+
+| `datenportal-jenkins-gretl-plugin`
+| Scanner, UI, Job-Generator, Berechtigungsprüfung, Pipeline-Rendering
+
+| `datenportal-jenkins-dev`
+| lokaler Jenkins, JCasC, Offline-Bundle, Image-Build, Java-Laufzeiten
+|===
+
+== Warum dieser Vertrag wichtig ist
+
+Das Plugin erzeugt Jenkins-Jobs nicht dynamisch bei jedem Seitenaufruf, sondern materialisiert sie über einen Seed-Lauf. Fehler im Themenrepo führen deshalb nicht nur zu kaputten Dateien, sondern zu fehlenden oder ungültigen Jenkins-Jobs.
+
+Für produktive Abläufe wird dieser Seed-Lauf aus einem versionierten Git-Stand gespeist. Für die lokale Entwicklung gibt es einen Jenkins-Worktree-Modus.
+
+Der Vertrag ist deshalb bewusst streng:
+
+* Organisationen brauchen eine gültige `gretl-datenportal-job.yaml`.
+* Datensätze brauchen genau eine Datenblattdatei mit Endung `.xtf` oder `.xml`.
+* Berechtigungen müssen explizit gesetzt sein.
+* Nach strukturellen Änderungen ist ein Seed-Lauf notwendig.

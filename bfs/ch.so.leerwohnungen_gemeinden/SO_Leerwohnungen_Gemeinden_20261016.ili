@@ -1,0 +1,28 @@
+INTERLIS 2.4;
+
+MODEL SO_Leerwohnungen_Gemeinden_20261016 (de) AT "https://models.geo.admin.ch/SO/SO_Leerwohnungen_Gemeinden_20261016.ili" VERSION "2026-10-16" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      jahr : MANDATORY 2021 .. 2100;
+      raum_ebene : MANDATORY TEXT*30;
+      bfs_nr : 1 .. 9999;
+      raum_id : MANDATORY TEXT*30;
+      raum : MANDATORY TEXT*100;
+      leer_total : MANDATORY 0 .. 9999999;
+      leer_1zi : MANDATORY 0 .. 9999999;
+      leer_2zi : MANDATORY 0 .. 9999999;
+      leer_3zi : MANDATORY 0 .. 9999999;
+      leer_4zi : MANDATORY 0 .. 9999999;
+      leer_5zi : MANDATORY 0 .. 9999999;
+      leer_6zi_plus : MANDATORY 0 .. 9999999;
+      leer_efh : MANDATORY 0 .. 9999999;
+      leer_mfh : MANDATORY 0 .. 9999999;
+      leer_neubau : MANDATORY 0 .. 9999999;
+      leer_altbau : MANDATORY 0 .. 9999999;
+      leer_zu_vermieten : MANDATORY 0 .. 9999999;
+      leer_zu_verkaufen : MANDATORY 0 .. 9999999;
+      registerbasiert : MANDATORY 0 .. 1;
+    END Observation;
+  END Data;
+END SO_Leerwohnungen_Gemeinden_20261016.

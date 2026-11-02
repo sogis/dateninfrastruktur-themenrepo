@@ -1,0 +1,16 @@
+INTERLIS 2.4;
+
+MODEL SO_Exportmonitor_Regionen_20261016 (de) AT "https://geo.so.ch/models/SO-DATA/SO_Exportmonitor_Regionen_20261016.ili" VERSION "2026-10-16" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      jahr : MANDATORY 2024 .. 2100;
+      monat : MANDATORY 1 .. 12;
+      monat_name : MANDATORY TEXT*20;
+      region : MANDATORY TEXT*50;
+      exporte_vorjahr_mio_chf : MANDATORY 0.0 .. 9999.9;
+      exporte_berichtsjahr_mio_chf : MANDATORY 0.0 .. 9999.9;
+      veraenderung_prozent : MANDATORY -9999.9 .. 9999.9;
+    END Observation;
+  END Data;
+END SO_Exportmonitor_Regionen_20261016.

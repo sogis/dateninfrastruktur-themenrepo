@@ -1,0 +1,20 @@
+INTERLIS 2.4;
+
+MODEL SO_Fahrzeugbestand_20261014 (de) AT "https://geo.so.ch/models/SO_Fahrzeugbestand_20261014.ili" VERSION "2026-10-14" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      GDENR : MANDATORY 1 .. 9999;
+      GDENAME : MANDATORY TEXT*100;
+      GDEBZNR : MANDATORY 1 .. 9999;
+      GDEBZNA : MANDATORY TEXT*100;
+      GDEKT : MANDATORY TEXT*2;
+      FZ_GROUP : MANDATORY TEXT*2;
+      FZ_GROUP_NA : MANDATORY TEXT*100;
+      FZART_CD : MANDATORY TEXT*2;
+      FZART_NA : MANDATORY TEXT*100;
+      Anzahl : MANDATORY 0 .. 9999999;
+      Anzahl_ohne_WS : MANDATORY 0 .. 9999999;
+    END Observation;
+  END Data;
+END SO_Fahrzeugbestand_20261014.

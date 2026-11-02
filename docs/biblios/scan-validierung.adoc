@@ -1,0 +1,53 @@
+= Scan- und Validierungsregeln
+:page-layout: docs
+:toc: macro
+:toclevels: 2
+
+== Organisationserkennung
+
+Top-Level-Ordner werden als Organisationen erkannt, wenn sie eine gültige `gretl-datenportal-job.yaml` enthalten.
+
+Technische Ordner werden ignoriert, solange sie nicht wie unvollständige Organisationen aussehen.
+
+== Datensatzerkennung
+
+Innerhalb einer Organisation werden Unterordner als Datensätze erkannt, wenn sie genau eine Metadatendatei mit Endung `.xtf` oder `.xml` enthalten.
+
+== Validierungsfehler
+
+[cols="1,2",options="header"]
+|===
+| Situation | Verhalten
+
+| Organisation ohne gültige `gretl-datenportal-job.yaml`
+| Organisation ist ungültig oder wird ignoriert.
+
+| `gretl-datenportal-job.yaml` kann nicht geparst werden
+| Organisation wird beim Seed nicht verwendet.
+
+| `permissions.read` fehlt oder ist leer
+| Organisation ist ungültig.
+
+| `permissions.build` fehlt oder ist leer
+| Organisation ist ungültig.
+
+| `gui`-Block vorhanden
+| Konfiguration wird zurückgewiesen.
+
+| Datensatzordner ohne `.xtf` oder `.xml`
+| Datensatz ist ungültig, wenn der Ordner wie ein Datensatz aussieht.
+
+| Datensatzordner mit mehreren `.xtf`-/`.xml`-Dateien
+| Datensatz ist mehrdeutig und ungültig.
+|===
+
+== Ignorierte Felder
+
+Diese Felder können in YAML vorkommen, werden von dieser Plugin-Version aber nicht effektiv verwendet:
+
+* `department`;
+* `datasets`;
+* `id` als Organisations-ID.
+
+Die Organisations-ID ergibt sich aus dem Ordnernamen.
+

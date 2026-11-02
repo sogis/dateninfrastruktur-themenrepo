@@ -1,0 +1,115 @@
+= GRETL-S3-Upload
+:page-layout: docs
+:toc: macro
+:toclevels: 2
+
+ifndef::themenrepo-gesamtdokument[]
+toc::[]
+endif::[]
+
+== Grundprinzip
+
+S3-Konfiguration ist Runtime-Konfiguration. Sie gehört weder in das
+Docker-Image noch in `gretl-datenportal-job.yaml` und muss nicht in jedem
+organisationsspezifischen `build.gradle` wiederholt werden.
+
+`shared/gradle/organisation-common.gradle` bindet dafür automatisch
+`shared/gradle/datenportal-s3.gradle` ein. Dieses gemeinsame Skript liest die
+S3-Properties zentral und stellt `registerDatenportalS3Upload` bereit.
+
+Der Standardjob verwendet konkret deklarierte Upload-Tasks. Er veröffentlicht
+nach bestätigter XTF-Umschaltung zusätzlich `opendata.rdf` mit
+`application/rdf+xml` und prüft den öffentlichen Inhalt byteweise.
+Ablauf, Filterung, Vorschau und getrennte Fehlerzustände stehen unter
+xref:lieferverarbeitung.adoc[Lieferverarbeitung].
+
+== Gradle-Properties
+
+Gradle übersetzt Umgebungsvariablen mit dem Präfix
+`ORG_GRADLE_PROJECT_` in normale Project Properties:
+
+[cols="1,1",options="header"]
+|===
+| Runtime-Variable | Zugriff im Build
+
+| `ORG_GRADLE_PROJECT_s3Endpoint`
+| `findProperty('s3Endpoint')`
+
+| `ORG_GRADLE_PROJECT_s3Region`
+| `findProperty('s3Region')`
+
+| `ORG_GRADLE_PROJECT_s3BucketName`
+| `findProperty('s3BucketName')`
+
+| `ORG_GRADLE_PROJECT_s3AccessKey`
+| `findProperty('s3AccessKey')`
+
+| `ORG_GRADLE_PROJECT_s3SecretKey`
+| `findProperty('s3SecretKey')`
+
+| `ORG_GRADLE_PROJECT_s3Acl`
+| `findProperty('s3Acl')`
+|===
+
+Die zentrale Datei liest alle Werte einmal. Endpoint, Region, Bucket, Access
+Key und Secret Key werden erst beim Ausführen eines Upload-Tasks als Pflicht-
+Properties validiert. Für `s3Acl` gilt standardmässig `private`.
+
+== Upload-Task registrieren
+
+Ein organisations- oder datensatzspezifisches Build muss nur noch die
+Quelldatei angeben:
+
+[source,groovy]
+----
+registerDatenportalS3Upload('uploadDataset') {
+    sourceFile = file('build/data/dataset.csv')
+}
+----
+
+Alternativ kann ein bestehender `S3Upload`-Task mit
+`project.ext.configureDatenportalS3Upload(delegate)` konfiguriert werden.
+Die gemeinsame Konfiguration setzt beim Taskstart Endpoint, Region, Bucket,
+Credentials und ACL. Dadurch bleiben die Werte ausserhalb des Themenrepos.
+
+== Jenkins und OpenShift
+
+Im lokalen Compose-Stack erhält der Jenkins-Service den internen Garage-
+Endpoint `http://garage:3900`. Im Test-, Integrations- und Produktionsbetrieb
+wird derselbe Vertrag mit dem jeweiligen Infrastruktur-Endpunkt verwendet,
+zum Beispiel `https://s3.geo.so.ch`.
+
+In OpenShift gehören Endpoint, Region und Bucket in eine ConfigMap. Access Key
+und Secret Key gehören in ein Secret. Beide müssen in den Container injiziert
+werden, in dem der Gradle-Wrapper tatsächlich läuft. Bei Kubernetes-Agenten
+ist deshalb der Agent-Pod beziehungsweise dessen GRETL-Container massgeblich,
+nicht nur der Jenkins-Controller.
+
+Beispiel:
+
+[source,yaml]
+----
+envFrom:
+  - configMapRef:
+      name: gretl-resources
+  - secretRef:
+      name: gretl-s3
+----
+
+Die ConfigMap und das Secret enthalten die oben genannten
+`ORG_GRADLE_PROJECT_*`-Namen. Das Docker-Image bleibt für alle Umgebungen
+identisch und enthält keine Endpoint- oder Credential-Werte.
+
+== Verifikation
+
+Mit gesetzten Runtime-Properties kann die zentrale Konfiguration ohne
+Credential-Ausgabe geprüft werden:
+
+[source,bash]
+----
+./gradlew -I "$PWD/shared/gradle/init.gradle" -p agi \
+  verifyDatenportalS3Configuration
+----
+
+Der Task gibt Endpoint, Region, Bucket, ACL und nur den konfigurierten Status
+der beiden Credential-Properties aus.
