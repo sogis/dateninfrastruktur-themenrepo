@@ -22,9 +22,9 @@ Hierher gehoeren:
 Nicht hierher gehoeren:
 
 - Scanner-, UI- und Seed-Logik des Plugins:
-  [datenportal-jenkins-gretl-plugin](https://codeberg.org/edigonzales/datenportal-jenkins-gretl-plugin)
+  [dateninfrastruktur-jenkins-gretl-plugin](https://github.com/sogis/dateninfrastruktur-jenkins-gretl-plugin)
 - lokaler Jenkins, JCasC, Offline-Bundle-Bau und Docker-Image:
-  [datenportal-jenkins-dev](https://codeberg.org/edigonzales/datenportal-jenkins-dev)
+  [dateninfrastruktur-jenkins-dev](https://github.com/sogis/dateninfrastruktur-jenkins-dev)
 
 ## Aktueller Vertragsstand
 
@@ -66,7 +66,7 @@ uncommittete Änderungen werden beim nächsten Seed als Snapshot übernommen.
 Danach die materialisierten Jobs prüfen. S3 bleibt in beiden Fällen die
 Quelle des angenommenen Gesamtstands; Seeden allein publiziert kein Datenblatt. Die lokalen Konten
 und der Bootstrap-Ablauf sind im Schwester-Repository
-[datenportal-jenkins-dev](https://codeberg.org/edigonzales/datenportal-jenkins-dev)
+[dateninfrastruktur-jenkins-dev](https://github.com/sogis/dateninfrastruktur-jenkins-dev)
 dokumentiert.
 
 ### Neue Organisation anlegen
@@ -86,19 +86,19 @@ beschrieben.
 Online-Test:
 
 ```bash
-cd ../datenportal-themenrepo
+cd ../dateninfrastruktur-themenrepo
 ./gradlew -I "$PWD/shared/gradle/init.gradle" -p agi tasks
 ```
 
 Offline-Test nach Bundle-Bau im Schwester-Repo:
 
 ```bash
-cd ../datenportal-jenkins-dev
+cd ../dateninfrastruktur-jenkins-dev
 ./bin/build-offline-bundle.sh
 
-cd ../datenportal-themenrepo
-GRADLE_USER_HOME="../datenportal-jenkins-dev/build/offline-bundle/gradle-user-home" \
-DATENPORTAL_OFFLINE_JARS_DIR="../datenportal-jenkins-dev/build/offline-bundle/jars" \
+cd ../dateninfrastruktur-themenrepo
+GRADLE_USER_HOME="../dateninfrastruktur-jenkins-dev/build/offline-bundle/gradle-user-home" \
+DATENINFRASTRUKTUR_OFFLINE_JARS_DIR="../dateninfrastruktur-jenkins-dev/build/offline-bundle/jars" \
 ./gradlew --offline -I "$PWD/shared/gradle/init.gradle" -p statistikdienst verifyPluginSetup
 ```
 
@@ -116,9 +116,9 @@ Empfohlene Einstiege:
 
 ## Schwester-Repositories
 
-- [datenportal-jenkins-gretl-plugin](https://codeberg.org/edigonzales/datenportal-jenkins-gretl-plugin)
+- [dateninfrastruktur-jenkins-gretl-plugin](https://github.com/sogis/dateninfrastruktur-jenkins-gretl-plugin)
   ist die kanonische Doku fuer Scanner, Startformular, Berechtigungen,
   Seed-Builder und Pipeline-Rendering.
-- [datenportal-jenkins-dev](https://codeberg.org/edigonzales/datenportal-jenkins-dev)
+- [dateninfrastruktur-jenkins-dev](https://github.com/sogis/dateninfrastruktur-jenkins-dev)
   ist die kanonische Doku fuer lokalen Jenkins, Offline-Bundle, Plugin-Installationsloop
   und Docker-/Airgap-Tests.

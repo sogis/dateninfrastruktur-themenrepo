@@ -4,7 +4,7 @@ import java.util.Properties
 // Das flache Offline-Bundle muss schon auf dem Init-Skript-Klassenpfad verfügbar sein,
 // damit die enthaltenen Plugins ohne Zugriff auf externe Repositories geladen werden.
 // Für diesen frühen Bootstrap hat die Umgebungsvariable Vorrang vor der Property.
-def bootstrapOfflineJarsDir = System.getenv('DATENPORTAL_OFFLINE_JARS_DIR')
+def bootstrapOfflineJarsDir = System.getenv('DATENINFRASTRUKTUR_OFFLINE_JARS_DIR')
 if (bootstrapOfflineJarsDir == null || bootstrapOfflineJarsDir.toString().trim().isEmpty()) {
     bootstrapOfflineJarsDir = gradle.startParameter.projectProperties['datenportalOfflineJarsDir']
 }
@@ -30,7 +30,7 @@ if (bootstrapOfflineJarsDir != null) {
 // ohne Override wird die Datei neben diesem Skript verwendet, unabhängig vom Startort.
 def buildConfigFilePath = gradle.startParameter.projectProperties['datenportalBuildConfigFile']
 if (buildConfigFilePath == null || buildConfigFilePath.toString().trim().isEmpty()) {
-    buildConfigFilePath = System.getenv('DATENPORTAL_BUILD_CONFIG_FILE')
+    buildConfigFilePath = System.getenv('DATENINFRASTRUKTUR_BUILD_CONFIG_FILE')
 }
 
 File buildConfigFile = buildConfigFilePath == null || buildConfigFilePath.toString().trim().isEmpty()
@@ -56,14 +56,14 @@ def readIndexedProperties = { Properties props, String prefix ->
             .findAll { !it.isEmpty() }
 }
 
-def defaultGretlPluginId = buildConfig.getProperty('datenportal.plugin.gretl.id', 'ch.so.agi.gretl').toString().trim()
-def defaultGretlPluginVersion = buildConfig.getProperty('datenportal.plugin.gretl.version', '5.0.0-SNAPSHOT').toString().trim()
-def defaultDownloadPluginId = buildConfig.getProperty('datenportal.plugin.download.id', 'de.undercouch.download').toString().trim()
-def defaultDownloadPluginVersion = buildConfig.getProperty('datenportal.plugin.download.version', '5.6.0').toString().trim()
-def defaultSshPluginId = buildConfig.getProperty('datenportal.plugin.ssh.id', 'org.hidetake.ssh').toString().trim()
-def defaultSshPluginVersion = buildConfig.getProperty('datenportal.plugin.ssh.version', '2.10.1').toString().trim()
-def projectRepositoryUrls = readIndexedProperties(buildConfig, 'datenportal.repository.project.')
-def pluginRepositoryUrls = readIndexedProperties(buildConfig, 'datenportal.repository.plugin.')
+def defaultGretlPluginId = buildConfig.getProperty('dateninfrastruktur.plugin.gretl.id', 'ch.so.agi.gretl').toString().trim()
+def defaultGretlPluginVersion = buildConfig.getProperty('dateninfrastruktur.plugin.gretl.version', '5.0.0-SNAPSHOT').toString().trim()
+def defaultDownloadPluginId = buildConfig.getProperty('dateninfrastruktur.plugin.download.id', 'de.undercouch.download').toString().trim()
+def defaultDownloadPluginVersion = buildConfig.getProperty('dateninfrastruktur.plugin.download.version', '5.6.0').toString().trim()
+def defaultSshPluginId = buildConfig.getProperty('dateninfrastruktur.plugin.ssh.id', 'org.hidetake.ssh').toString().trim()
+def defaultSshPluginVersion = buildConfig.getProperty('dateninfrastruktur.plugin.ssh.version', '2.10.1').toString().trim()
+def projectRepositoryUrls = readIndexedProperties(buildConfig, 'dateninfrastruktur.repository.project.')
+def pluginRepositoryUrls = readIndexedProperties(buildConfig, 'dateninfrastruktur.repository.plugin.')
 
 if (projectRepositoryUrls.isEmpty()) {
     throw new GradleException("No project repositories configured in ${buildConfigFile}.")
@@ -77,7 +77,7 @@ if (pluginRepositoryUrls.isEmpty()) {
 // beide zugleich wären mehrdeutig und werden deshalb unten abgewiesen.
 def offlineRepoDir = gradle.startParameter.projectProperties['datenportalOfflineRepoDir']
 if (offlineRepoDir == null || offlineRepoDir.toString().trim().isEmpty()) {
-    offlineRepoDir = System.getenv('DATENPORTAL_OFFLINE_REPO_DIR')
+    offlineRepoDir = System.getenv('DATENINFRASTRUKTUR_OFFLINE_REPO_DIR')
 }
 offlineRepoDir = offlineRepoDir == null || offlineRepoDir.toString().trim().isEmpty()
         ? null
@@ -85,14 +85,14 @@ offlineRepoDir = offlineRepoDir == null || offlineRepoDir.toString().trim().isEm
 
 def offlineJarsDir = gradle.startParameter.projectProperties['datenportalOfflineJarsDir']
 if (offlineJarsDir == null || offlineJarsDir.toString().trim().isEmpty()) {
-    offlineJarsDir = System.getenv('DATENPORTAL_OFFLINE_JARS_DIR')
+    offlineJarsDir = System.getenv('DATENINFRASTRUKTUR_OFFLINE_JARS_DIR')
 }
 offlineJarsDir = offlineJarsDir == null || offlineJarsDir.toString().trim().isEmpty()
         ? null
         : offlineJarsDir.toString().trim()
 
 if (offlineRepoDir != null && offlineJarsDir != null) {
-    throw new GradleException('Use either DATENPORTAL_OFFLINE_REPO_DIR or DATENPORTAL_OFFLINE_JARS_DIR, not both.')
+    throw new GradleException('Use either DATENINFRASTRUKTUR_OFFLINE_REPO_DIR or DATENINFRASTRUKTUR_OFFLINE_JARS_DIR, not both.')
 }
 
 // Versions-Overrides ermöglichen gezielte Tests eines anderen Pluginstands, ohne

@@ -33,11 +33,11 @@ Ein Seed-Lauf ist nötig nach Änderungen an:
 Nach einem frischen lokalen Checkout provisioniert das Jenkins-Plugin den Seed-Job `gretl-datenportal-seed` nach dem Start automatisch.
 
 In der lokalen Dev-Umgebung kommen Repository-Quelle und Modus aus
-`datenportal-jenkins-dev/casc/jenkins.yaml` beziehungsweise den Env-Variablen
+`dateninfrastruktur-jenkins-dev/casc/jenkins.yaml` beziehungsweise den Env-Variablen
 `THEMEN_REPO_MODE`, `THEMEN_REPO_URL`, `THEMEN_REPO_PATH` und
 `THEMEN_REPO_BRANCH`.
 
-Für lokale Tests verwendet `datenportal-jenkins-dev` den JCasC-Local-Security-Realm. Eine AD-/LDAP-Umgebung ist dafür nicht erforderlich. In einer
+Für lokale Tests verwendet `dateninfrastruktur-jenkins-dev` den JCasC-Local-Security-Realm. Eine AD-/LDAP-Umgebung ist dafür nicht erforderlich. In einer
 produktiven Umgebung liefert dagegen die konfigurierte
 AD-/LDAP-/Entra-Authentisierung die Jenkins-Benutzer-IDs, die in
 `shared/gretl-datenportal-teams.yaml` referenziert werden.
@@ -66,7 +66,7 @@ Garage-Bucket automatisch: nach erfolgreichem Seed, bei pausiertem Jenkins,
 in einer beschreibbaren Kopie des Seed-Checkouts. Vorhandene Bestände bleiben
 erhalten. Migration und abweichende Publikationsziele werden explizit
 administrativ vorbereitet; Standardjobs dafür pausieren und laufende Builds abwarten. Die vollständige
-link:https://codeberg.org/edigonzales/datenportal-dev-stack/src/branch/main/docs/biblios/inbetriebnahme.adoc[Stack-Inbetriebnahme]
+link:https://github.com/sogis/dateninfrastruktur-dev-stack/src/branch/main/docs/biblios/inbetriebnahme.adoc[Stack-Inbetriebnahme]
 beschreibt die beschreibbare Container-Arbeitskopie und optionale Katalogmigration.
 Bei vorhandenem Manifest ist die Initialisierung gesperrt. Ein späterer Seed
 aktualisiert keinen S3-Bestand; dafür Lieferung oder Repository-Abgleich starten.
@@ -91,5 +91,5 @@ Danach ist ein Seed-Lauf notwendig, damit bestehende generierte Jobs neue Pipeli
 
 == Weiterführend
 
-* Die technische Seed- und Jobgenerator-Logik liegt im Repository link:https://codeberg.org/edigonzales/datenportal-jenkins-gretl-plugin[datenportal-jenkins-gretl-plugin].
-* Lokaler Jenkins-Start, Plugin-Installationsloop und Offline-Bundle-Bau liegen im Repository link:https://codeberg.org/edigonzales/datenportal-jenkins-dev[datenportal-jenkins-dev].
+* Die technische Seed- und Jobgenerator-Logik liegt im Repository link:https://github.com/sogis/dateninfrastruktur-jenkins-gretl-plugin[dateninfrastruktur-jenkins-gretl-plugin].
+* Lokaler Jenkins-Start, Plugin-Installationsloop und Offline-Bundle-Bau liegen im Repository link:https://github.com/sogis/dateninfrastruktur-jenkins-dev[dateninfrastruktur-jenkins-dev].

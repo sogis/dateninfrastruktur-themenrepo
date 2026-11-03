@@ -76,5 +76,5 @@ Die Datenblattdatei darf technisch anders heissen. Für Lesbarkeit und Fehlersuc
 
 == Weiterführend
 
-* Wie Datensätze technisch erkannt und validiert werden, ist im Repository link:https://codeberg.org/edigonzales/datenportal-jenkins-gretl-plugin[datenportal-jenkins-gretl-plugin] beschrieben.
-* Wie Datensätze lokal gegen Jenkins und das Offline-Bundle getestet werden, ist im Repository link:https://codeberg.org/edigonzales/datenportal-jenkins-dev[datenportal-jenkins-dev] beschrieben.
+* Wie Datensätze technisch erkannt und validiert werden, ist im Repository link:https://github.com/sogis/dateninfrastruktur-jenkins-gretl-plugin[dateninfrastruktur-jenkins-gretl-plugin] beschrieben.
+* Wie Datensätze lokal gegen Jenkins und das Offline-Bundle getestet werden, ist im Repository link:https://github.com/sogis/dateninfrastruktur-jenkins-dev[dateninfrastruktur-jenkins-dev] beschrieben.

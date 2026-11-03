@@ -15,19 +15,19 @@ Das Repository beantwortet aus Sicht des Plugins drei Fragen:
 
 == Abgrenzung zu anderen Repositories
 
-Das Themenrepo ist ein Consumer des Betriebs- und Plugin-Setups. Der Jenkins-Controller und das Dockerimage werden im Repo `datenportal-jenkins-dev` vorbereitet. Das Jenkins-Plugin wird im Repo `datenportal-jenkins-gretl-plugin` entwickelt. Das Themenrepo selbst enthält den fachlichen Input für diese Infrastruktur.
+Das Themenrepo ist ein Consumer des Betriebs- und Plugin-Setups. Der Jenkins-Controller und das Dockerimage werden im Repo `dateninfrastruktur-jenkins-dev` vorbereitet. Das Jenkins-Plugin wird im Repo `dateninfrastruktur-jenkins-gretl-plugin` entwickelt. Das Themenrepo selbst enthält den fachlichen Input für diese Infrastruktur.
 
 [cols="1,2",options="header"]
 |===
 | Repository | Rolle 
 
-| `datenportal-themenrepo`
+| `dateninfrastruktur-themenrepo`
 | Organisationen, Datensätze, Shared Defaults, Gradle-Build-Vertrag
 
-| `datenportal-jenkins-gretl-plugin`
+| `dateninfrastruktur-jenkins-gretl-plugin`
 | Scanner, UI, Job-Generator, Berechtigungsprüfung, Pipeline-Rendering
 
-| `datenportal-jenkins-dev`
+| `dateninfrastruktur-jenkins-dev`
 | lokaler Jenkins, JCasC, Offline-Bundle, Image-Build, Java-Laufzeiten
 |===
 

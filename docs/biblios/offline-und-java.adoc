@@ -9,7 +9,7 @@ endif::[]
 
 == Abgrenzung
 
-Das Offline-Bundle wird nicht im Themenrepo gebaut. Zuständig ist das Repository `datenportal-jenkins-dev`.
+Das Offline-Bundle wird nicht im Themenrepo gebaut. Zuständig ist das Repository `dateninfrastruktur-jenkins-dev`.
 
 Das Themenrepo muss aber so aufgebaut sein, dass der vorbereitete Offline-Vertrag funktioniert. In der Regel verwenden wir sowohl in der Produktion wie auch zum lokalen Entwickeln ein Dockerimage mit dem Offline-Bundle, damit sichergestellt wird, dass die gleiche GRETL-Version verwendet wird und dass nicht zur Laufzeit Dependencies im Internet heruntergeladen werden müssen.
 
@@ -34,7 +34,7 @@ Zum Offline-Bundle gehören insbesondere:
 | Enthält die offline vorbereiteten Plugin- und Runtime-Jars.
 
 | `models`
-| Enthält die reproduzierbar vorbereiteten INTERLIS-Modelle samt Abhängigkeiten. Zur Laufzeit über `DATENPORTAL_MODELS_DIR` bereitgestellt.
+| Enthält die reproduzierbar vorbereiteten INTERLIS-Modelle samt Abhängigkeiten. Zur Laufzeit über `DATENINFRASTRUKTUR_MODELS_DIR` bereitgestellt.
 |===
 
 Zur Laufzeit werden dafür typischerweise diese Umgebungsvariablen gesetzt:
@@ -42,13 +42,13 @@ Zur Laufzeit werden dafür typischerweise diese Umgebungsvariablen gesetzt:
 [source,bash]
 ----
 GRADLE_USER_HOME=/pfad/zum/offline-bundle/gradle-user-home
-DATENPORTAL_OFFLINE_JARS_DIR=/pfad/zum/offline-bundle/jars
+DATENINFRASTRUKTUR_OFFLINE_JARS_DIR=/pfad/zum/offline-bundle/jars
 ----
 
 Die DuckDB-Extensions werden passend zur Laufzeit separat installiert:
 beim Image-Build für Linux, beim Shellstart für den Host. Pfade, Defaults und
 Installation beschreibt die
-link:https://codeberg.org/edigonzales/datenportal-jenkins-dev/src/branch/main/docs/biblios/entwicklung/referenz-konfiguration.adoc[Jenkins-Referenz].
+link:https://github.com/sogis/dateninfrastruktur-jenkins-dev/src/branch/main/docs/biblios/entwicklung/referenz-konfiguration.adoc[Jenkins-Referenz].
 HTTP-Downloads des Publikationsjobs benötigen einen Aufruf ohne `--offline`;
 die lokale Abhängigkeitsauflösung bleibt erhalten. Echte Offline-Lieferprüfungen
 verwenden lokale Manifest-/XTF-Fixtures im isolierten Image-Test.
@@ -80,18 +80,18 @@ Der Laufzeitvertrag sieht vereinfacht so aus:
 . Der Wrapper setzt `JAVA_HOME` aus `GRADLE_JAVA_HOME_17`.
 . `./gradlew` liest `gradle/wrapper/gradle-wrapper.properties`.
 . Die Gradle-Distribution wird unter `GRADLE_USER_HOME/wrapper/dists` gesucht.
-. `shared/gradle/init.gradle` bindet `DATENPORTAL_OFFLINE_JARS_DIR` ein.
+. `shared/gradle/init.gradle` bindet `DATENINFRASTRUKTUR_OFFLINE_JARS_DIR` ein.
 
 == Lokaler Offline-Test
 
 [source,bash]
 ----
-cd ../datenportal-jenkins-dev
+cd ../dateninfrastruktur-jenkins-dev
 ./bin/build-offline-bundle.sh
 
-cd ../datenportal-themenrepo
-GRADLE_USER_HOME="../datenportal-jenkins-dev/build/offline-bundle/gradle-user-home" \
-DATENPORTAL_OFFLINE_JARS_DIR="../datenportal-jenkins-dev/build/offline-bundle/jars" \
+cd ../dateninfrastruktur-themenrepo
+GRADLE_USER_HOME="../dateninfrastruktur-jenkins-dev/build/offline-bundle/gradle-user-home" \
+DATENINFRASTRUKTUR_OFFLINE_JARS_DIR="../dateninfrastruktur-jenkins-dev/build/offline-bundle/jars" \
 ./gradlew --offline -I "$PWD/shared/gradle/init.gradle" -p agi tasks
 ----
 

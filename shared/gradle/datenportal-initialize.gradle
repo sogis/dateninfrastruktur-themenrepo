@@ -10,7 +10,7 @@ import ch.so.agi.gretl.tasks.IliValidator
 // gezielt Organisation/Thema/Datei und berücksichtigt nur konfigurierte Organisationen.
 def root=project.ext.publicationRoot
 def work=project.ext.publicationWorkDir
-def models=System.getenv('DATENPORTAL_MODELS_DIR') ?: new File(root,'shared/models').path
+def models=System.getenv('DATENINFRASTRUKTUR_MODELS_DIR') ?: new File(root,'shared/models').path
 def sheets=fileTree(root) { include '*/*/*' }.filter { f ->
     f.name.toLowerCase() ==~ /.*\.(xtf|xml)$/ && f.parentFile.name.contains('.') &&
     f.parentFile.name ==~ /^[A-Za-z0-9][A-Za-z0-9_.-]*$/ &&

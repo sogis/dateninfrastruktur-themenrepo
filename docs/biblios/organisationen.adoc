@@ -106,7 +106,7 @@ Eine Mitgliedschaft in `agi-build` erlaubt Lesen und Starten des Jobs. Ist eine
 Person Mitglied mehrerer dieser Teams, werden ihre Berechtigungen vereinigt.
 
 Im lokalen Entwicklungsstack stammen Benutzer-IDs aus dem JCasC-Local-
-Security-Realm des Repositories `datenportal-jenkins-dev`; deshalb kann dort
+Security-Realm des Repositories `dateninfrastruktur-jenkins-dev`; deshalb kann dort
 ohne AD/LDAP getestet werden. In produktiven Umgebungen müssen dieselben
 Teamdatei-IDs den Benutzer-IDs der konfigurierten AD-/LDAP-/Entra-Authentisierungsquelle entsprechen.
 

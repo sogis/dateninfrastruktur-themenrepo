@@ -4,16 +4,16 @@
 == Umgebung und Zuständigkeit
 
 Für die vollständige lokale Integration mit Garage, Jenkins und Editor gilt die
-link:https://codeberg.org/edigonzales/datenportal-dev-stack/src/branch/main/docs/biblios/inbetriebnahme.adoc[Dev-Stack-Inbetriebnahme].
+link:https://github.com/sogis/dateninfrastruktur-dev-stack/src/branch/main/docs/biblios/inbetriebnahme.adoc[Dev-Stack-Inbetriebnahme].
 Sie enthält den administrativen Erstaufbau in einer beschreibbaren Kopie im
 Jenkins-Volume, Portalanschluss, Lieferfolgen und Fehlerdiagnose. Quellmount und
 Seeder-Snapshot dürfen nicht als Gradle-Buildverzeichnis verwendet werden.
 
 Der separate Shellstart von Jenkins bleibt unter
-link:https://codeberg.org/edigonzales/datenportal-jenkins-dev/src/branch/main/docs/biblios/entwicklung/lokaler-jenkins-start.adoc[Jenkins lokal starten]
+link:https://github.com/sogis/dateninfrastruktur-jenkins-dev/src/branch/main/docs/biblios/entwicklung/lokaler-jenkins-start.adoc[Jenkins lokal starten]
 beschrieben. Dort lässt sich `THEMEN_REPO_MODE` wählen; Compose verwendet normalerweise
 `working-tree`; die Registry-Variante verwendet `managed-git`. Java-/Offline- und ENV-Einstellungen stehen in der
-link:https://codeberg.org/edigonzales/datenportal-jenkins-dev/src/branch/main/docs/biblios/entwicklung/referenz-konfiguration.adoc[Jenkins-Referenz].
+link:https://github.com/sogis/dateninfrastruktur-jenkins-dev/src/branch/main/docs/biblios/entwicklung/referenz-konfiguration.adoc[Jenkins-Referenz].
 
 == Änderung bis zur angenommenen Veröffentlichung
 

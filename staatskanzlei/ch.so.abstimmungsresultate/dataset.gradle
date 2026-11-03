@@ -4,7 +4,7 @@
 // Configure the existing publication validator; do not register a second task.
 gradle.projectsEvaluated {
     tasks.named('validateDeliveredCsv').configure {
-        def sharedModels = System.getenv('DATENPORTAL_MODELS_DIR') ?: file('../shared/models').absolutePath
+        def sharedModels = System.getenv('DATENINFRASTRUKTUR_MODELS_DIR') ?: file('../shared/models').absolutePath
         modelDirectories(file('ch.so.abstimmungsresultate').absolutePath + ';' + sharedModels)
         firstLineIsHeader.set(true)
         valueSeparator.set(';')

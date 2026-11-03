@@ -47,10 +47,10 @@ Git-Rückschreiben betrifft ausschliesslich das ausgewählte Datenblatt.
 
 == Weiterführend
 
-* Wie diese Struktur gescannt und validiert wird, ist im Repository link:https://codeberg.org/edigonzales/datenportal-jenkins-gretl-plugin[datenportal-jenkins-gretl-plugin] beschrieben.
-* Wie das Themenrepo lokal in Jenkins und Offline-Tests eingebunden wird, ist im Repository link:https://codeberg.org/edigonzales/datenportal-jenkins-dev[datenportal-jenkins-dev] beschrieben.
+* Wie diese Struktur gescannt und validiert wird, ist im Repository link:https://github.com/sogis/dateninfrastruktur-jenkins-gretl-plugin[dateninfrastruktur-jenkins-gretl-plugin] beschrieben.
+* Wie das Themenrepo lokal in Jenkins und Offline-Tests eingebunden wird, ist im Repository link:https://github.com/sogis/dateninfrastruktur-jenkins-dev[dateninfrastruktur-jenkins-dev] beschrieben.
 
-* Die vollständige lokale Inbetriebnahme mit Garage, Initialisierung und Portalanschluss steht im link:https://codeberg.org/edigonzales/datenportal-dev-stack/src/branch/main/docs/biblios/index.adoc[Dev-Stack-Handbuch].
+* Die vollständige lokale Inbetriebnahme mit Garage, Initialisierung und Portalanschluss steht im link:https://github.com/sogis/dateninfrastruktur-dev-stack/src/branch/main/docs/biblios/index.adoc[Dev-Stack-Handbuch].
 
 == Kurzer Wegweiser
 

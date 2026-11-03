@@ -334,7 +334,7 @@ Vor Freigabe der Standardjobs beziehungsweise während diese pausiert sind:
 Der Aufruf benötigt einen beschreibbaren Checkout, `GRADLE_JAVA_HOME_17`
 und die eingerichtete Abhängigkeits-/Modellauflösung. Die vollständige lokale
 Containeranleitung mit eigener Arbeitskopie und Wiederfreigabe der Jobs steht
-in der link:https://codeberg.org/edigonzales/datenportal-dev-stack/src/branch/main/docs/biblios/inbetriebnahme.adoc[Stack-Inbetriebnahme].
+in der link:https://github.com/sogis/dateninfrastruktur-dev-stack/src/branch/main/docs/biblios/inbetriebnahme.adoc[Stack-Inbetriebnahme].
 S3-Zugangsdaten werden extern über die Umgebung bereitgestellt. Optional kann
 `-PinitialCatalog=/pfad/zum/bisherigen-katalog.xtf` ergänzt werden.
 Der Root-Task liest alle Repository-Datenblätter und Ämter, schreibt niemals
@@ -380,13 +380,13 @@ Bei einer Vorschau bleibt der RDF-Status `not-published`, obwohl der lokale Expo
 
 == Tests und weitere Konfiguration
 
-`datenportal-jenkins-dev/bin/test-image-publication.sh` prüft echte GRETL-Läufe
+`dateninfrastruktur-jenkins-dev/bin/test-image-publication.sh` prüft echte GRETL-Läufe
 mit `--network none`. Nur der Test übernimmt Kandidaten gezielt als nächste
-Fixture. `datenportal-dev-stack/scripts/test-publication.py` prüft reale
+Fixture. `dateninfrastruktur-dev-stack/scripts/verify-foundation.sh` prüft reale
 Garage-Uploads und Fehlerfälle mit eigenen temporären Containern sowie einem
 isolierten Bare-Repository. Bestehende Stack-Volumes bleiben unangetastet.
 
-Die link:https://codeberg.org/edigonzales/datenportal-jenkins-dev/src/branch/main/docs/biblios/entwicklung/referenz-konfiguration.adoc[zentrale Jenkins-Konfigurationsreferenz]
+Die link:https://github.com/sogis/dateninfrastruktur-jenkins-dev/src/branch/main/docs/biblios/entwicklung/referenz-konfiguration.adoc[zentrale Jenkins-Konfigurationsreferenz]
 beschreibt ENV-Defaults und Neustart-/Seeder-Verhalten.
 Der tatsächliche Harvester-Anschluss an opendata.swiss,
 die Umstellung auf DCAT-AP CH V3, automatische Wiederaufnahme und
