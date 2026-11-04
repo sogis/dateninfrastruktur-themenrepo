@@ -35,7 +35,9 @@ def sheetModel = 'SO_AGI_DataCatalog_Datasheet_20260523'
 def catalogModel = 'SO_AGI_DataCatalog_PublishedCatalog_20260602'
 def officeModel = 'SO_AGI_DataCatalog_Base_20260529'
 def publish = (findProperty('s3Publish') ?: 'false').toString() == 'true'
-def reload = (findProperty('reloadPortal') ?: 'false').toString() == 'true'
+def databaseCatalog = (findProperty('catalogSourceType') ?: 'manifest').toString() == 'database'
+def reload = !databaseCatalog && (findProperty('reloadPortal') ?: 'false').toString() == 'true'
+if (databaseCatalog) logger.lifecycle('DB-Katalog: Dieser Job erzeugt nur Legacyartefakte; kein Portal-Reload und keine DB-Publikation.')
 def manifestUrl = (findProperty('publicationManifestUrl') ?: '').toString().trim()
 def localInput = manifestUrl.startsWith('file:')
 // Eindeutige Dateinamen erlauben, XTF und DuckDB vollständig hochzuladen,
@@ -555,7 +557,7 @@ tasks.register('uploadCurrentManifest', S3Upload) {
         def response=readPointer()
         if (response.status!=200 || manifest(new JsonSlurper().parseText(response.body))!=nextManifest.get())
             throw new GradleException('Could not confirm current.json publication.')
-        report.publication='accepted'; report.mode='accepted'; writeReport()
+        report.publication='accepted'; report.mode='accepted'; if (databaseCatalog) { report.publicationTarget='legacy-artifacts'; report.liveCatalogUpdated=false; report.message='Legacyartefakte übernommen; der PostgreSQL-Katalog bleibt unverändert.' }; writeReport()
     }
 }
 // opendata.rdf folgt erst nach der bestätigten XTF-Umschaltung. Die feste Datei

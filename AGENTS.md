@@ -22,3 +22,12 @@ Dieses Repo enthält Metadaten, Jobdefinitionen, den gemeinsamen Jenkinsfile-Ver
 ## Nachweise
 
 Scanner-/Seed-Vertrag und lokale Erstpublikation im neuen Stack prüfen. Manifestreferenzen und echte lesbare Katalogartefakte nachweisen. Keine externen Writes/Reloads und keine geschützten Testinhalte in öffentlichen Publikationsartefakten. Phasenberichte zentral im Dev-Stack führen.
+
+## Aktiver Folgeauftrag MA-F
+
+Für Compose-Konsolidierung gilt der vollständige Auftrag unter
+`../dateninfrastruktur-dev-stack/docs/implementation/compose-consolidation/CODEX_STARTPROMPT.md`.
+Die früheren Grundinstallationsgrenzen oben sind historisch; bestehende Lader,
+Daten und Nutzerarbeit bleiben erhalten. Nur notwendiger Legacy-Reloadadapter
+für den DB-Katalog, kein zweiter Publisher. Reviews und Quellenisolation gemäss
+Workspace-AGENTS; keine Remoteoperation ohne gesonderten Auftrag.
