@@ -31,3 +31,11 @@ Die früheren Grundinstallationsgrenzen oben sind historisch; bestehende Lader,
 Daten und Nutzerarbeit bleiben erhalten. Nur notwendiger Legacy-Reloadadapter
 für den DB-Katalog, kein zweiter Publisher. Reviews und Quellenisolation gemäss
 Workspace-AGENTS; keine Remoteoperation ohne gesonderten Auftrag.
+
+## Geltung der historischen Aufträge
+
+Die vorstehenden MA-0–F-/Grundinstallationsgrenzen gelten nur für ihre damaligen
+Aufträge. Für den ausdrücklich aktivierten MA-G-Auftrag gilt `../AGENTS.md` und
+vollständig `../dateninfrastruktur-dev-stack/docs/implementation/storage-and-delivery/`.
+Aktive Altverträge werden gemäss MA-G ersetzt; Sicherheits- und Datenerhaltungsregeln
+bleiben bindend. Historische Dokumente und Nutzerarbeit nicht umschreiben.
