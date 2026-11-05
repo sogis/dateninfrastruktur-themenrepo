@@ -1,8 +1,0 @@
-title: Amt für Umwelt
-description: Datenportal-Ausführungen des AfU.
-
-permissions:
-  read:
-    - team: datenportal-read
-  build:
-    - team: afu-build

@@ -1,8 +1,0 @@
-title: Motorfahrzeugkontrolle
-description: Datenportal-Ausführungen der Motorfahrzeugkontrolle.
-
-permissions:
-  read:
-    - team: datenportal-read
-  build:
-    - team: mfk-build

@@ -17,6 +17,6 @@ Die ältere Organisations- und Publikationsdokumentation unter
 Sie ist keine Anleitung zur CSV-Anlieferung und ihre Benutzer- und
 Jobbeschreibungen werden nicht zur Laufzeit eingelesen.
 
-Die Buildkoordinaten für GRETL liegen unter `shared/gradle/`. Für MA-G verwendet
-das Jenkins-Image das in MA-G0 identifizierte Offline-Bundle mit geprüften
-JAR-Hashes.
+Der Jenkinsbuild verwendet das in MA-G0 identifizierte Offline-Bundle mit
+geprüften JAR-Hashes. Das Image übernimmt nur die versionierten Runner-,
+Vertrags- und Modellquellen aus diesem Repository.
