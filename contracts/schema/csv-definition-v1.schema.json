@@ -161,26 +161,48 @@
             "type": "string"
           },
           "type": {
-            "const": "integer"
+            "enum": [
+              "integer",
+              "decimal",
+              "text",
+              "mtext",
+              "date",
+              "timestamp",
+              "boolean",
+              "enum"
+            ]
           },
           "mandatory": {
             "type": "boolean"
           },
           "minimum": {
-            "type": "integer",
-            "minimum": -2147483648,
-            "maximum": 2147483647
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "maximum": {
-            "type": "integer",
-            "minimum": -2147483648,
-            "maximum": 2147483647
+            "type": [
+              "number",
+              "null"
+            ]
           },
           "clickhouseType": {
-            "const": "Int32"
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1024
           },
           "exportType": {
-            "const": "integer"
+            "enum": [
+              "integer",
+              "decimal",
+              "text",
+              "mtext",
+              "date",
+              "timestamp",
+              "boolean",
+              "enum"
+            ]
           }
         }
       }

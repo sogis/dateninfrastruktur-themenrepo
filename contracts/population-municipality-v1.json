@@ -1,0 +1,162 @@
+{
+  "schemaVersion": 1,
+  "definitionKey": "population-municipality-v1",
+  "contractVersion": 1,
+  "modelName": "SO_Bevoelkerung_Gemeinde_Geschlecht_20261015",
+  "modelVersion": "2026-10-15",
+  "qualifiedTableName": "SO_Bevoelkerung_Gemeinde_Geschlecht_20261015.Data.Observation",
+  "modelFiles": [
+    {
+      "relativePath": "models/SO_Bevoelkerung_Gemeinde_Geschlecht_20261015.ili",
+      "sha256": "5b4838859bc113769af719f8ccf82a28dc1e100c8c43ee592046155ffefbe9da"
+    }
+  ],
+  "modelSetSha256": "dee300a0f019db9a6351ab970a86d8d81da8acb409c7671816397d54eed9c621",
+  "compiledModel": {
+    "relativePath": "contracts/compiled/population-municipality-v1.imd",
+    "sha256": "e7357fc63c68d434740ffcfff5552cdc0fd5ba2deec91893deab48e909fe110e",
+    "compilerVersion": "5.6.9"
+  },
+  "dialect": {
+    "encoding": "UTF-8",
+    "header": true,
+    "separator": ";",
+    "quote": "\"",
+    "lineEnding": "LF",
+    "bom": "reject",
+    "nullLiteral": "",
+    "decimalSeparator": "."
+  },
+  "columns": [
+    {
+      "header": "BFS_Nr",
+      "attribute": "BFS_Nr",
+      "type": "integer",
+      "mandatory": true,
+      "minimum": 1,
+      "maximum": 9999,
+      "clickhouseType": "Int32",
+      "exportType": "integer"
+    },
+    {
+      "header": "Gemeinde",
+      "attribute": "Gemeinde",
+      "type": "text",
+      "mandatory": true,
+      "minimum": null,
+      "maximum": null,
+      "clickhouseType": "String",
+      "exportType": "text"
+    },
+    {
+      "header": "Bezirk",
+      "attribute": "Bezirk",
+      "type": "text",
+      "mandatory": true,
+      "minimum": null,
+      "maximum": null,
+      "clickhouseType": "String",
+      "exportType": "text"
+    },
+    {
+      "header": "SchweizerInnen_Weiblich",
+      "attribute": "SchweizerInnen_Weiblich",
+      "type": "integer",
+      "mandatory": true,
+      "minimum": 0,
+      "maximum": 999999,
+      "clickhouseType": "Int32",
+      "exportType": "integer"
+    },
+    {
+      "header": "AuslaenderInnen_Weiblich",
+      "attribute": "AuslaenderInnen_Weiblich",
+      "type": "integer",
+      "mandatory": true,
+      "minimum": 0,
+      "maximum": 999999,
+      "clickhouseType": "Int32",
+      "exportType": "integer"
+    },
+    {
+      "header": "SchweizerInnen_Maennlich",
+      "attribute": "SchweizerInnen_Maennlich",
+      "type": "integer",
+      "mandatory": true,
+      "minimum": 0,
+      "maximum": 999999,
+      "clickhouseType": "Int32",
+      "exportType": "integer"
+    },
+    {
+      "header": "AuslaenderInnen_Maennlich",
+      "attribute": "AuslaenderInnen_Maennlich",
+      "type": "integer",
+      "mandatory": true,
+      "minimum": 0,
+      "maximum": 999999,
+      "clickhouseType": "Int32",
+      "exportType": "integer"
+    },
+    {
+      "header": "Total_SchweizerInnen",
+      "attribute": "Total_SchweizerInnen",
+      "type": "integer",
+      "mandatory": true,
+      "minimum": 0,
+      "maximum": 999999,
+      "clickhouseType": "Int32",
+      "exportType": "integer"
+    },
+    {
+      "header": "Total_AuslaenderInnen",
+      "attribute": "Total_AuslaenderInnen",
+      "type": "integer",
+      "mandatory": true,
+      "minimum": 0,
+      "maximum": 999999,
+      "clickhouseType": "Int32",
+      "exportType": "integer"
+    },
+    {
+      "header": "Total_Maennlich",
+      "attribute": "Total_Maennlich",
+      "type": "integer",
+      "mandatory": true,
+      "minimum": 0,
+      "maximum": 999999,
+      "clickhouseType": "Int32",
+      "exportType": "integer"
+    },
+    {
+      "header": "Total_Weiblich",
+      "attribute": "Total_Weiblich",
+      "type": "integer",
+      "mandatory": true,
+      "minimum": 0,
+      "maximum": 999999,
+      "clickhouseType": "Int32",
+      "exportType": "integer"
+    },
+    {
+      "header": "Total",
+      "attribute": "Total",
+      "type": "integer",
+      "mandatory": true,
+      "minimum": 0,
+      "maximum": 999999,
+      "clickhouseType": "Int32",
+      "exportType": "integer"
+    }
+  ],
+  "businessKey": [
+    "BFS_Nr"
+  ],
+  "limits": {
+    "maxBytes": 104857600,
+    "maxRows": 1000000,
+    "maxCellBytes": 32767,
+    "timeoutSeconds": 1800
+  },
+  "allowEmptyReplacement": false
+}

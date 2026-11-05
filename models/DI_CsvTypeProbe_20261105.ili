@@ -1,0 +1,20 @@
+INTERLIS 2.4;
+
+MODEL DI_CsvTypeProbe_20261105 (de) AT "https://geo.so.ch/models/DI_CsvTypeProbe_20261105" VERSION "2026-11-05" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      Kennung : MANDATORY TEXT*12;
+      Betrag : MANDATORY -9999999999.9999 .. 9999999999.9999;
+      Datum : MANDATORY INTERLIS.XMLDate;
+      Zeitpunkt : MANDATORY INTERLIS.XMLDateTime;
+      Aktiv : MANDATORY BOOLEAN;
+      Zustand : MANDATORY (offen, abgeklaert, abgeschlossen) ORDERED;
+      Hinweis : TEXT*150;
+      Beschreibung : MANDATORY MTEXT*2000;
+    END Observation;
+    CONSTRAINTS OF DI_CsvTypeProbe_20261105.Data.Observation =
+      UNIQUE UniqueKennung: Kennung;
+    END;
+  END Data;
+END DI_CsvTypeProbe_20261105.

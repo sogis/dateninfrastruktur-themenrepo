@@ -1,0 +1,25 @@
+INTERLIS 2.4;
+
+MODEL SO_Bevoelkerung_Gemeinde_Geschlecht_20261015 (de) AT "https://geo.so.ch/models/SO_Bevoelkerung_Gemeinde_Geschlecht_20261015" VERSION "2026-10-15" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      BFS_Nr : MANDATORY 1 .. 9999;
+      Gemeinde : MANDATORY TEXT*100;
+      Bezirk : MANDATORY TEXT*60;
+      SchweizerInnen_Weiblich : MANDATORY 0 .. 999999;
+      AuslaenderInnen_Weiblich : MANDATORY 0 .. 999999;
+      SchweizerInnen_Maennlich : MANDATORY 0 .. 999999;
+      AuslaenderInnen_Maennlich : MANDATORY 0 .. 999999;
+      Total_SchweizerInnen : MANDATORY 0 .. 999999;
+      Total_AuslaenderInnen : MANDATORY 0 .. 999999;
+      Total_Maennlich : MANDATORY 0 .. 999999;
+      Total_Weiblich : MANDATORY 0 .. 999999;
+      Total : MANDATORY 0 .. 999999;
+    END Observation;
+    CONSTRAINTS OF SO_Bevoelkerung_Gemeinde_Geschlecht_20261015.Data.Observation =
+      UNIQUE UniqueBfsNr: BFS_Nr;
+    END;
+
+  END Data;
+END SO_Bevoelkerung_Gemeinde_Geschlecht_20261015.

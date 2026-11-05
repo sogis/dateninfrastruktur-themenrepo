@@ -1,0 +1,56 @@
+buildscript {
+    dependencies { classpath fileTree('/opt/dateninfrastruktur/offline-bundle/jars') { include '*.jar' } }
+}
+plugins { id 'java' }
+import ch.so.agi.gretl.tasks.CsvValidator
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
+def run = file(providers.gradleProperty('runDirectory').get()).canonicalFile
+def planFile = new File(run, 'plan.json')
+if (!planFile.isFile() || planFile.length() > 131072L) throw new GradleException('Missing bounded execution plan')
+def plan = new JsonSlurper().parse(planFile)
+def bundle = rootDir.parentFile
+buildDir = new File(run, 'build')
+dependencies { implementation fileTree('/opt/dateninfrastruktur/offline-bundle/jars') { include '*.jar' } }
+java { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
+
+def javaStage = { String name, String stage ->
+    tasks.register(name, JavaExec) {
+        dependsOn tasks.named('classes')
+        classpath = sourceSets.main.runtimeClasspath
+        mainClass = 'ch.so.agi.dateninfrastruktur.ingest.RunnerMain'
+        args stage, run.absolutePath, bundle.absolutePath
+        workingDir = run
+        maxHeapSize = '512m'
+    }
+}
+def prepare = javaStage('prepareSnapshot', 'prepare')
+def validate = { String name, String fileName, def prerequisite ->
+    tasks.register(name, CsvValidator) {
+        dependsOn prerequisite
+        def input = new File(run,fileName)
+        dataFiles input
+        modelNames plan.qualifiedTableName.split('\\.')[0]
+        modelDirectories new File(run,'models').absolutePath
+        firstLineIsHeader.set(true)
+        valueSeparator.set(plan.csvDialect.separator.toString())
+        valueDelimiter.set(plan.csvDialect.quote.toString())
+        encoding.set('UTF-8')
+        failOnError.set(true)
+        logFile new File(run,name+'.private.log')
+        doFirst {
+            if (!input.isFile() || input.length() == 0 || getDataFiles() == null || getDataFiles().size() != 1) throw new GradleException('Missing bounded validator input')
+            new File(run,name+'.started').text = 'started\n'
+        }
+        doLast {
+            if (!validationOk) throw new GradleException('CSV validation did not complete')
+            new File(run,name+'.json').text = JsonOutput.toJson([executed:true,validationOk:true,errors:0,validator:'1.15.0',modelSetSha256:plan.modelSetSha256])
+        }
+    }
+}
+def incoming = validate('validateIncomingCsv', 'incoming-validation.csv', prepare)
+def full = validate('validateCompleteSnapshot', 'snapshot-validation.csv', incoming)
+def export = javaStage('exportDistributions', 'export')
+export.configure { dependsOn full }
+tasks.register('ingestCsv') { dependsOn export }

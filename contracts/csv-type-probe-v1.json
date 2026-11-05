@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "definitionKey": "csv-type-probe-v1",
+  "contractVersion": 1,
+  "modelName": "DI_CsvTypeProbe_20261105",
+  "modelVersion": "2026-11-05",
+  "qualifiedTableName": "DI_CsvTypeProbe_20261105.Data.Observation",
+  "modelFiles": [
+    {
+      "relativePath": "models/DI_CsvTypeProbe_20261105.ili",
+      "sha256": "1e4ae169c0240e2e83a224849384326f20c165a267addb211e7393c19d69a8e6"
+    }
+  ],
+  "modelSetSha256": "5cf407ab09f2edcf3c42b2a4ef4e5b0db5dbccd1f395fc5fb0e9fdf50a5e5c04",
+  "compiledModel": {
+    "relativePath": "contracts/compiled/csv-type-probe-v1.imd",
+    "sha256": "31e7aeaa4f2e4da2d41997b3a82c5cea43059d160c6218344b47e048faabe46b",
+    "compilerVersion": "5.6.9"
+  },
+  "dialect": {
+    "encoding": "UTF-8",
+    "header": true,
+    "separator": ";",
+    "quote": "\"",
+    "lineEnding": "LF",
+    "bom": "reject",
+    "nullLiteral": "",
+    "decimalSeparator": "."
+  },
+  "columns": [
+    {
+      "header": "Kennung",
+      "attribute": "Kennung",
+      "type": "text",
+      "mandatory": true,
+      "minimum": null,
+      "maximum": null,
+      "clickhouseType": "String",
+      "exportType": "text"
+    },
+    {
+      "header": "Betrag",
+      "attribute": "Betrag",
+      "type": "decimal",
+      "mandatory": true,
+      "minimum": -9999999999.9999,
+      "maximum": 9999999999.9999,
+      "clickhouseType": "Decimal(14,4)",
+      "exportType": "decimal"
+    },
+    {
+      "header": "Datum",
+      "attribute": "Datum",
+      "type": "date",
+      "mandatory": true,
+      "minimum": null,
+      "maximum": null,
+      "clickhouseType": "Date32",
+      "exportType": "date"
+    },
+    {
+      "header": "Zeitpunkt",
+      "attribute": "Zeitpunkt",
+      "type": "timestamp",
+      "mandatory": true,
+      "minimum": null,
+      "maximum": null,
+      "clickhouseType": "DateTime64(3,'UTC')",
+      "exportType": "timestamp"
+    },
+    {
+      "header": "Aktiv",
+      "attribute": "Aktiv",
+      "type": "boolean",
+      "mandatory": true,
+      "minimum": null,
+      "maximum": null,
+      "clickhouseType": "Bool",
+      "exportType": "boolean"
+    },
+    {
+      "header": "Zustand",
+      "attribute": "Zustand",
+      "type": "enum",
+      "mandatory": true,
+      "minimum": null,
+      "maximum": null,
+      "clickhouseType": "Enum8('offen'=1,'abgeklaert'=2,'abgeschlossen'=3)",
+      "exportType": "enum"
+    },
+    {
+      "header": "Hinweis",
+      "attribute": "Hinweis",
+      "type": "text",
+      "mandatory": false,
+      "minimum": null,
+      "maximum": null,
+      "clickhouseType": "Nullable(String)",
+      "exportType": "text"
+    },
+    {
+      "header": "Beschreibung",
+      "attribute": "Beschreibung",
+      "type": "mtext",
+      "mandatory": true,
+      "minimum": null,
+      "maximum": null,
+      "clickhouseType": "String",
+      "exportType": "mtext"
+    }
+  ],
+  "businessKey": [
+    "Kennung"
+  ],
+  "limits": {
+    "maxBytes": 104857600,
+    "maxRows": 1000000,
+    "maxCellBytes": 32767,
+    "timeoutSeconds": 1800
+  },
+  "allowEmptyReplacement": false
+}

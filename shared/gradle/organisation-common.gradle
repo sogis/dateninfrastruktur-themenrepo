@@ -338,4 +338,3 @@ tasks.register('verifyPluginSetup') {
 
 project.ext.validateDatenportalExecution = validateExecutionContext
 project.ext.parseDatenportalDefinition = { File source -> parseDatasetDefinition(source) }
-apply from: new File(sharedGradleDir, 'datenportal-publication.gradle')
