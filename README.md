@@ -1,5 +1,12 @@
 # dateninfrastruktur-themenrepo
 
+MA-F verwendet den gemeinsamen Compose-Stack und den DB-Katalog. Der normale
+Stackstart startet keine Publikation. Legacy-S3-Publikation bei
+`catalogSourceType=database` wird vor Taskaktionen abgewiesen; lokale
+Legacyartefakte mit `s3Publish=false` und eigenständige Ladejobs bleiben möglich.
+Bestehender ClickHouse-Lader, Daten und private Archive werden nicht zurückgesetzt.
+
+
 Fachliches Vertragsrepo für Organisationen, Datensätze, Shared Defaults und
 den Gradle-Build-Vertrag des GRETL-Datenportals in der lokalen
 Dateninfrastruktur-Grundinstallation.

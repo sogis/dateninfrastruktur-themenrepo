@@ -38,6 +38,15 @@ def publish = (findProperty('s3Publish') ?: 'false').toString() == 'true'
 def databaseCatalog = (findProperty('catalogSourceType') ?: 'manifest').toString() == 'database'
 def reload = !databaseCatalog && (findProperty('reloadPortal') ?: 'false').toString() == 'true'
 if (databaseCatalog) logger.lifecycle('DB-Katalog: Dieser Job erzeugt nur Legacyartefakte; kein Portal-Reload und keine DB-Publikation.')
+// Der DB-Katalog hat keinen öffentlichen current.json-/Reloadvertrag. Eine
+// solche Publikation vor sämtlichen fachlichen/externen Taskaktionen ablehnen;
+// eigenständige Ladejobs und lokale Legacyartefakte bleiben unverändert nutzbar.
+gradle.taskGraph.whenReady { graph ->
+    def legacyWrites = ['uploadDataExports','uploadPlaygroundCatalog','uploadPublicationFiles','uploadCurrentManifest','uploadOpendata','reloadPortal','publishToDatenportal']
+    if (databaseCatalog && publish && graph.allTasks.any { it.project == project && it.name in legacyWrites })
+        throw new GradleException('DB-Katalog: Legacy-S3-Publikation ist hier nicht der Registrierungsweg. Für lokale Legacyartefakte -Ps3Publish=false verwenden; Lieferungen mit dem expliziten Management-Operator registrieren.')
+}
+
 def manifestUrl = (findProperty('publicationManifestUrl') ?: '').toString().trim()
 def localInput = manifestUrl.startsWith('file:')
 // Eindeutige Dateinamen erlauben, XTF und DuckDB vollständig hochzuladen,
