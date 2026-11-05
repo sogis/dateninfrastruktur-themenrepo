@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "di-json-v1",
+  "vectors": [
+    {
+      "name": "ordered-unicode-null-decimal",
+      "canonical": "{\"a\":1.23,\"b\":[null,true,\"Grüezi\\n\"]}",
+      "sha256": "f4165df93ee0722beb627945ebc6447b75dfe1c18464d1bac9bcb217dc2f11ac"
+    },
+    {
+      "name": "utf8-key-order-supplementary-scalar",
+      "canonical": "{\"\":1,\"𐀀\":2}",
+      "sha256": "a128afde61716ae373763e00b205c8c93eaf3d162bb4e6a4c59f716abdbf89a8"
+    }
+  ]
+}

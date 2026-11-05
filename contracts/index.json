@@ -1,0 +1,9 @@
+{
+  "schemaVersion": 1,
+  "definitions": [
+    {
+      "relativePath": "contracts/population-v1.json",
+      "sha256": "60902b5af84464dea348bae2263e08435790c0a34476da926dfb426e4f0f286f"
+    }
+  ]
+}

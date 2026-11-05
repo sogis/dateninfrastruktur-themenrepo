@@ -1,0 +1,19 @@
+INTERLIS 2.4;
+
+MODEL SO_Bevoelkerung_Altersstruktur_20261015 (de) AT "https://models.geo.admin.ch/SO/SO_Bevoelkerung_Altersstruktur_20261015.ili" VERSION "2026-10-15" =
+  TOPIC Data =
+    OID AS INTERLIS.ANYOID;
+    CLASS Observation =
+      Jahrgang : MANDATORY 1900 .. 2100;
+      Auslaender : MANDATORY 0 .. 9999;
+      Auslaenderinnen : MANDATORY 0 .. 9999;
+      Schweizer : MANDATORY 0 .. 9999;
+      Schweizerinnen : MANDATORY 0 .. 9999;
+      Total : MANDATORY 0 .. 99999;
+    END Observation;
+    CONSTRAINTS OF SO_Bevoelkerung_Altersstruktur_20261015.Data.Observation =
+      UNIQUE UniqueJahrgang: Jahrgang;
+    END;
+
+  END Data;
+END SO_Bevoelkerung_Altersstruktur_20261015.

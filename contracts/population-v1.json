@@ -1,0 +1,102 @@
+{
+  "schemaVersion": 1,
+  "definitionKey": "population-v1",
+  "contractVersion": 1,
+  "modelName": "SO_Bevoelkerung_Altersstruktur_20261015",
+  "modelVersion": "2026-10-15",
+  "qualifiedTableName": "SO_Bevoelkerung_Altersstruktur_20261015.Data.Observation",
+  "modelFiles": [
+    {
+      "relativePath": "models/SO_Bevoelkerung_Altersstruktur_20261015.ili",
+      "sha256": "09438e64baae5701e3ecf0a4ca2b19419207c2223968d6416864f1fd61130a48"
+    }
+  ],
+  "modelSetSha256": "42b17c0d56da0f0fdcb964bf5bfb63e612e334c5f39405dd41f3573e09ac503e",
+  "compiledModel": {
+    "relativePath": "contracts/compiled/population-v1.imd",
+    "sha256": "762a1328abadc226b36af5aa2a467e84272014a0e64b233ac3ca78b084643b80",
+    "compilerVersion": "5.6.9"
+  },
+  "dialect": {
+    "encoding": "UTF-8",
+    "header": true,
+    "separator": ";",
+    "quote": "\"",
+    "lineEnding": "LF",
+    "bom": "reject",
+    "nullLiteral": "",
+    "decimalSeparator": "."
+  },
+  "columns": [
+    {
+      "header": "Jahrgang",
+      "attribute": "Jahrgang",
+      "type": "integer",
+      "mandatory": true,
+      "minimum": 1900,
+      "maximum": 2100,
+      "clickhouseType": "Int32",
+      "exportType": "integer"
+    },
+    {
+      "header": "Auslaender",
+      "attribute": "Auslaender",
+      "type": "integer",
+      "mandatory": true,
+      "minimum": 0,
+      "maximum": 9999,
+      "clickhouseType": "Int32",
+      "exportType": "integer"
+    },
+    {
+      "header": "Auslaenderinnen",
+      "attribute": "Auslaenderinnen",
+      "type": "integer",
+      "mandatory": true,
+      "minimum": 0,
+      "maximum": 9999,
+      "clickhouseType": "Int32",
+      "exportType": "integer"
+    },
+    {
+      "header": "Schweizer",
+      "attribute": "Schweizer",
+      "type": "integer",
+      "mandatory": true,
+      "minimum": 0,
+      "maximum": 9999,
+      "clickhouseType": "Int32",
+      "exportType": "integer"
+    },
+    {
+      "header": "Schweizerinnen",
+      "attribute": "Schweizerinnen",
+      "type": "integer",
+      "mandatory": true,
+      "minimum": 0,
+      "maximum": 9999,
+      "clickhouseType": "Int32",
+      "exportType": "integer"
+    },
+    {
+      "header": "Total",
+      "attribute": "Total",
+      "type": "integer",
+      "mandatory": true,
+      "minimum": 0,
+      "maximum": 99999,
+      "clickhouseType": "Int32",
+      "exportType": "integer"
+    }
+  ],
+  "businessKey": [
+    "Jahrgang"
+  ],
+  "limits": {
+    "maxBytes": 104857600,
+    "maxRows": 1000000,
+    "maxCellBytes": 32767,
+    "timeoutSeconds": 1800
+  },
+  "allowEmptyReplacement": false
+}

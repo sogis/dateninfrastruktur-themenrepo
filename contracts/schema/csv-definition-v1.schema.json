@@ -1,0 +1,231 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:di:csv-definition:1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "definitionKey",
+    "contractVersion",
+    "modelName",
+    "modelVersion",
+    "qualifiedTableName",
+    "modelFiles",
+    "modelSetSha256",
+    "compiledModel",
+    "dialect",
+    "columns",
+    "businessKey",
+    "limits",
+    "allowEmptyReplacement"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "const": 1
+    },
+    "definitionKey": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]{0,127}$"
+    },
+    "contractVersion": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "modelName": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_]*$"
+    },
+    "modelVersion": {
+      "type": "string",
+      "minLength": 1
+    },
+    "qualifiedTableName": {
+      "type": "string",
+      "pattern": "^[A-Za-z][A-Za-z0-9_]*\\.[A-Za-z][A-Za-z0-9_]*\\.[A-Za-z][A-Za-z0-9_]*$"
+    },
+    "modelFiles": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "relativePath",
+          "sha256"
+        ],
+        "properties": {
+          "relativePath": {
+            "type": "string",
+            "pattern": "^models/[A-Za-z][A-Za-z0-9_]*\\.ili$"
+          },
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          }
+        }
+      }
+    },
+    "modelSetSha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "compiledModel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "relativePath",
+        "sha256",
+        "compilerVersion"
+      ],
+      "properties": {
+        "relativePath": {
+          "type": "string",
+          "pattern": "^contracts/compiled/[a-z][a-z0-9_-]*\\.imd$"
+        },
+        "sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "compilerVersion": {
+          "const": "5.6.9"
+        }
+      }
+    },
+    "dialect": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "encoding",
+        "header",
+        "separator",
+        "quote",
+        "lineEnding",
+        "bom",
+        "nullLiteral",
+        "decimalSeparator"
+      ],
+      "properties": {
+        "encoding": {
+          "const": "UTF-8"
+        },
+        "header": {
+          "const": true
+        },
+        "separator": {
+          "enum": [
+            ";",
+            ","
+          ]
+        },
+        "quote": {
+          "const": "\""
+        },
+        "lineEnding": {
+          "const": "LF"
+        },
+        "bom": {
+          "const": "reject"
+        },
+        "nullLiteral": {
+          "const": ""
+        },
+        "decimalSeparator": {
+          "const": "."
+        }
+      }
+    },
+    "columns": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 256,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "header",
+          "attribute",
+          "type",
+          "mandatory",
+          "minimum",
+          "maximum",
+          "clickhouseType",
+          "exportType"
+        ],
+        "properties": {
+          "header": {
+            "type": "string"
+          },
+          "attribute": {
+            "type": "string"
+          },
+          "type": {
+            "const": "integer"
+          },
+          "mandatory": {
+            "type": "boolean"
+          },
+          "minimum": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "maximum": {
+            "type": "integer",
+            "minimum": -2147483648,
+            "maximum": 2147483647
+          },
+          "clickhouseType": {
+            "const": "Int32"
+          },
+          "exportType": {
+            "const": "integer"
+          }
+        }
+      }
+    },
+    "businessKey": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "maxBytes",
+        "maxRows",
+        "maxCellBytes",
+        "timeoutSeconds"
+      ],
+      "properties": {
+        "maxBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 268435456
+        },
+        "maxRows": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000000
+        },
+        "maxCellBytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32767
+        },
+        "timeoutSeconds": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 7200
+        }
+      }
+    },
+    "allowEmptyReplacement": {
+      "type": "boolean"
+    }
+  }
+}
