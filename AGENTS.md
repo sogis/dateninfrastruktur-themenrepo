@@ -1,41 +1,16 @@
-# AGENTS.md – dateninfrastruktur-themenrepo
+# dateninfrastruktur-themenrepo
 
-## Vor Beginn lesen
+Im gemeinsamen Dateninfrastruktur-Workspace vor repoübergreifender Arbeit
+`../AGENTS.md` ausdrücklich lesen und die Repo-Grenzen verifizieren. Bei einem
+Einzelclone gelten die lokalen Regeln und Bedienhinweise im README. Für
+repoübergreifende Aufträge zuerst den verifizierten Workspace bereitstellen.
 
-Lies ausdrücklich `../AGENTS.md` und `../dateninfrastruktur-dev-stack/docs/implementation/grundinstallation/AUFTRAG_GRUNDINSTALLATION.md` sowie den zur aktuellen Rolle gehörenden Startprompt im selben Dokumentationsordner. Fehlt `../AGENTS.md`, lies ersatzweise `../dateninfrastruktur-dev-stack/docs/implementation/grundinstallation/templates/AGENTS.workspace.md`. Verlasse dich nicht auf automatische Vererbung über Git-Grenzen. Weitere betroffene Schwesterrepos haben eigene AGENTS-Dateien.
+Dieses Repo besitzt die fachlichen CSV-Definitionen, die gepinnten Modelle
+und den festen GRETL-Runner. Der Stack bindet diese Inputs ins Runnerbundle
+ein. Der Runner verarbeitet nur gebundene Lieferpläne und belegt seine
+Kandidatenausgaben. Versions-/Schemabezüge und Hashbindungen erhalten.
 
-Diese Regeln gelten für Implementierung **und** Review. Ein Reviewauftrag erlaubt keine Änderungen an Produktdateien, Tests, Anforderungen oder AGENTS-Dateien; Befunde melden, nicht selbst reparieren. Builds/Tests nur mit eigenen Laufzeitdaten. Quellrepos, fremde Änderungen und laufende fremde Instanzen erhalten; keine Secrets in Git oder Berichten.
-
-## Verantwortung
-
-Dieses Repo enthält Metadaten, Jobdefinitionen, den gemeinsamen Jenkinsfile-Vertrag und die bestehende Publikationslogik für den lokalen Portal-Bootstrap.
-
-## Besondere Regeln
-
-- Organisations-/Datensatzstruktur, INTERLIS-Modellnamen, fachliche IDs und Scanner-YAML-Dateinamen zunächst erhalten.
-- Aktive Lieferungs-, Manifest-, S3-, Reload- und Git-Ziele ausschliesslich lokal beziehungsweise deaktiviert. Beschreibende Herkunfts-URLs sind davon zu unterscheiden.
-- Bestehenden `initializePublication`-Ablauf verwenden. Eine gültige Veröffentlichung ohne gelieferte Fachdaten genügt; keine gefälschte DuckDB-Headerdatei.
-- Modelle gemäss vorhandenem Manifest durch den Jenkins-Runtime-Build bereitstellen. Keine vollständige lokale `shared/models`-Ablage voraussetzen.
-- Kein CSV-Ladeweg nach ClickHouse, keine Historisierung, keine neue Berechtigungspipeline und kein allgemeiner INTERLIS-nach-ClickHouse-Generator in dieser Etappe.
-- Quell- und Zielkopie auseinanderhalten; der Jenkins-Seed verwendet das neue Repo. Beim Kopieren dessen vorab abgelegte AGENTS-Datei erhalten.
-
-## Nachweise
-
-Scanner-/Seed-Vertrag und lokale Erstpublikation im neuen Stack prüfen. Manifestreferenzen und echte lesbare Katalogartefakte nachweisen. Keine externen Writes/Reloads und keine geschützten Testinhalte in öffentlichen Publikationsartefakten. Phasenberichte zentral im Dev-Stack führen.
-
-## Aktiver Folgeauftrag MA-F
-
-Für Compose-Konsolidierung gilt der vollständige Auftrag unter
-`../dateninfrastruktur-dev-stack/docs/implementation/compose-consolidation/CODEX_STARTPROMPT.md`.
-Die früheren Grundinstallationsgrenzen oben sind historisch; bestehende Lader,
-Daten und Nutzerarbeit bleiben erhalten. Nur notwendiger Legacy-Reloadadapter
-für den DB-Katalog, kein zweiter Publisher. Reviews und Quellenisolation gemäss
-Workspace-AGENTS; keine Remoteoperation ohne gesonderten Auftrag.
-
-## Geltung der historischen Aufträge
-
-Die vorstehenden MA-0–F-/Grundinstallationsgrenzen gelten nur für ihre damaligen
-Aufträge. Für den ausdrücklich aktivierten MA-G-Auftrag gilt `../AGENTS.md` und
-vollständig `../dateninfrastruktur-dev-stack/docs/implementation/storage-and-delivery/`.
-Aktive Altverträge werden gemäss MA-G ersetzt; Sicherheits- und Datenerhaltungsregeln
-bleiben bindend. Historische Dokumente und Nutzerarbeit nicht umschreiben.
+Der eigenständige ClickHouse-Ladeweg besitzt seinen eigenen dokumentierten
+Aufruf. Für Build, Vertragstests und Laufzeitinputs gilt README.md.
+Fachliche Rechte liegen in PostgreSQL; der aktuelle Lieferweg spiegelt
+Personenrechte und Teams nicht als Jobkonfiguration.
