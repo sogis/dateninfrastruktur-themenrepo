@@ -22,7 +22,7 @@ Builtin-Modell INTERLIS. Die kompilierten Dateien sind keine freihändig
 gepflegten Ersatzmodelle. Prüfung und reproduzierbare Neukompilation:
 
 ```sh
-python3 ../dateninfrastruktur-dev-stack/scripts/test_ingestion_definitions_g2.py
+python3 ../dateninfrastruktur-dev-stack/scripts/test_csv_definitions.py
 ```
 
 Die Kanonisierung für API-/Planhashes ist `di-json-v1`: UTF-8, sortierte

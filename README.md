@@ -1,22 +1,16 @@
 # Themenrepo der Dateninfrastruktur
 
-`contracts/` enthält die versionierten CSV-Lieferverträge und die zugehörigen
-Schemas und Metadaten. `models/` enthält die gepinnten INTERLIS-Modelle. Der
-gemeinsame Compose-Stack baut diese Quellen in das Jenkins-Runnerbundle ein.
-Der Admin-Datenbankkatalog bestimmt, für welche Datensätze ein Vertrag gilt
-und wer liefern darf. Neue Aufträge verwenden die Oberfläche `/anlieferung`.
+`contracts/` enthält die versionierten CSV-Lieferverträge mit Schema- und
+Modellbezügen. `models/` enthält die gepinnten INTERLIS-Modelle.
+Der Admin-Katalog bestimmt, für welche Datensätze ein Vertrag gilt und
+wer liefern darf. Ein neuer Vertrag bindet Modellbytes, tatsächliche
+Compiler-Ausgabe, Spalten, Typen und Integritätsprüfungen.
 
-`runner/` enthält den festen GRETL-Einstieg `ingestCsv`, die
-Snapshotverarbeitung und die Exporte. Der Runner liest ausschliesslich einen
-servergebundenen Plan. `fixtures/csv-g4/` enthält synthetische Prüfdaten zu den
-zwei bestehenden Modellen und dem separaten technischen Typvertrag.
+`runner/` enthält den GRETL-Einstieg `ingestCsv` für Validierung,
+Snapshotbildung und Exporte. Der Runner liest ausschliesslich den
+servergebundenen Plan. `fixtures/csv-delivery/` enthält synthetische
+Prüfdaten. Der [Jenkinsbuild](../dateninfrastruktur-jenkins-dev/README.md)
+verpackt die versionierten Runner-, Vertrags- und Modellquellen.
 
-Der bestehende eigenständige ClickHouse-Lader und seine Daten bleiben erhalten.
-Die ältere Organisations- und Publikationsdokumentation unter
-[docs/biblios](docs/biblios/index.adoc) beschreibt die damalige Installation.
-Sie ist keine Anleitung zur CSV-Anlieferung und ihre Benutzer- und
-Jobbeschreibungen werden nicht zur Laufzeit eingelesen.
-
-Der Jenkinsbuild verwendet das in MA-G0 identifizierte Offline-Bundle mit
-geprüften JAR-Hashes. Das Image übernimmt nur die versionierten Runner-,
-Vertrags- und Modellquellen aus diesem Repository.
+Der eigenständige ClickHouse-Lader besitzt seinen eigenen Vertrag und
+bleibt unabhängig vom CSV-Lieferjob.
