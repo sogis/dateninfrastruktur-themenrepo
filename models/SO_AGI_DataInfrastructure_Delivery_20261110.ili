@@ -1,0 +1,111 @@
+INTERLIS 2.4;
+
+/** Dauerhafte fachliche Anlieferungen, keine zweite Ablaufsteuerung.
+ * Submission referenziert die konkrete Datenstruktur und die Ergebnisversion.
+ * Keine JSON-Vertragskennungen, Konfigurations-/Modellhashes oder Modell-Pins.
+ * Der Dateihash inputSha256 bleibt ein Nachweis fuer die tatsaechliche Eingabe.
+ *
+ * Der Runner verarbeitet die Daten und meldet das Ergebnis per API. Das Backend
+ * speichert die Annahme samt Version, Distributionen und statistischen Werten.
+ * Checkpoints, Lease, Heartbeat, Queue-IDs und technisches Audit bleiben ausserhalb.
+ */
+MODEL SO_AGI_DataInfrastructure_Delivery_20261110 (en)
+  AT "https://geo.so.ch/models/AGI" VERSION "2026-11-10" =
+  IMPORTS SO_AGI_DataInfrastructure_Catalog_20261110,
+          SO_AGI_DataInfrastructure_Access_20261110;
+
+  DOMAIN
+    EventTime = FORMAT INTERLIS.XMLDateTime "1582-01-01T00:00:00.000" .. "2999-12-31T23:59:59.999";
+    Sha256 = TEXT*64;
+    NonNegative = 0 .. 999999999999999999;
+    DeliveryMode = (replace, append);
+    DeliveryStatus = (pending, accepted, rejected, cancelled);
+
+  TOPIC Delivery =
+    OID AS INTERLIS.UUIDOID;
+    DEPENDS ON SO_AGI_DataInfrastructure_Catalog_20261110.Catalog,
+               SO_AGI_DataInfrastructure_Access_20261110.Access;
+
+    !!@ di.audit=full
+    CLASS Submission =
+      createdAt : MANDATORY EventTime;
+      completedAt : EventTime;
+      format : MANDATORY SO_AGI_DataInfrastructure_Catalog_20261110.InputFormat;
+      mode : MANDATORY DeliveryMode;
+      status : MANDATORY DeliveryStatus;
+      originalFileName : TEXT*255;
+      inputSha256 : Sha256;
+      inputSize : NonNegative;
+      idempotencyKey : MANDATORY INTERLIS.UUIDOID;
+      comment : MTEXT;
+      resultMessage : MTEXT;
+      MANDATORY CONSTRAINT CompletedStatus:
+        (status == #pending AND NOT (DEFINED(completedAt)))
+        OR (status != #pending AND DEFINED(completedAt));
+      MANDATORY CONSTRAINT OrderedTimes:
+        NOT (DEFINED(completedAt)) OR createdAt <= completedAt;
+      MANDATORY CONSTRAINT AcceptedInputRecorded:
+        status != #accepted OR
+        (DEFINED(originalFileName) AND DEFINED(inputSha256) AND DEFINED(inputSize));
+    END Submission;
+
+    !!@ di.audit=full
+    ASSOCIATION SubmissionDataset =
+      dataset (EXTERNAL) -- {1} SO_AGI_DataInfrastructure_Catalog_20261110.Catalog.Dataset;
+      submissions -- {0..*} Submission;
+    END SubmissionDataset;
+
+    !!@ di.audit=full
+    ASSOCIATION SubmissionIssue =
+      issue (EXTERNAL) -- {1} SO_AGI_DataInfrastructure_Catalog_20261110.Catalog.DatasetIssue;
+      submissions -- {0..*} Submission;
+    END SubmissionIssue;
+
+    !!@ di.audit=full
+    ASSOCIATION SubmissionSchema =
+      schema (EXTERNAL) -- {1} SO_AGI_DataInfrastructure_Catalog_20261110.Catalog.DataSchema;
+      submissions -- {0..*} Submission;
+    END SubmissionSchema;
+
+    !!@ di.audit=full
+    ASSOCIATION SubmissionSubmitter =
+      submittedBy (EXTERNAL) -- {1} SO_AGI_DataInfrastructure_Access_20261110.Access.Principal;
+      submissions -- {0..*} Submission;
+    END SubmissionSubmitter;
+
+    !!@ di.audit=full
+    ASSOCIATION SubmissionBaseVersion =
+      baseVersion (EXTERNAL) -- {0..1} SO_AGI_DataInfrastructure_Catalog_20261110.Catalog.DataVersion;
+      basedSubmissions -- {0..*} Submission;
+    END SubmissionBaseVersion;
+
+    !!@ di.audit=full
+    ASSOCIATION SubmissionResult =
+      acceptedVersion (EXTERNAL) -- {0..1} SO_AGI_DataInfrastructure_Catalog_20261110.Catalog.DataVersion;
+      originatingSubmission -- {0..1} Submission;
+    END SubmissionResult;
+
+    CONSTRAINTS OF Submission =
+      UNIQUE submittedBy, idempotencyKey;
+      MANDATORY CONSTRAINT AcceptedVersionPresent:
+        (status == #accepted) == DEFINED(acceptedVersion);
+      MANDATORY CONSTRAINT IssueBelongsToDataset:
+        issue->dataset->identifier == dataset->identifier;
+      MANDATORY CONSTRAINT AppendNeedsBase:
+        mode != #append OR DEFINED(baseVersion);
+      MANDATORY CONSTRAINT BaseBelongsToIssue:
+        NOT (DEFINED(baseVersion)) OR
+        (baseVersion->issue->issueKey == issue->issueKey
+          AND baseVersion->issue->dataset->identifier == dataset->identifier);
+      MANDATORY CONSTRAINT AppendUsesSameSchema:
+        mode != #append OR baseVersion->schema->identifier == schema->identifier;
+      MANDATORY CONSTRAINT ResultBelongsToIssue:
+        NOT (DEFINED(acceptedVersion)) OR
+        (acceptedVersion->issue->issueKey == issue->issueKey
+          AND acceptedVersion->issue->dataset->identifier == dataset->identifier);
+      MANDATORY CONSTRAINT ResultUsesSubmissionSchema:
+        NOT (DEFINED(acceptedVersion)) OR acceptedVersion->schema->identifier == schema->identifier;
+    END;
+
+  END Delivery;
+END SO_AGI_DataInfrastructure_Delivery_20261110.
