@@ -14,6 +14,22 @@ parameter('s3Endpoint', required: true, description: 'Garage-Endpunkt')
 parameter('s3AccessKey', required: true, description: 'Garage Writer Access Key')
 parameter('s3Bucket', defaultValue: 'ch.so.daten', description: 'Privater Garage-Bucket')
 
+parameter('clickhouseUrl', required: true, description: 'ClickHouse-HTTP-Endpunkt')
+parameter('clickhouseUser', required: true, description: 'ClickHouse-Importbenutzer')
+
+def clickhouseType = { column ->
+    String type = switch (column.dataType) {
+        case 'text', 'mtext', 'enumeration' -> 'String'
+        case 'integer' -> 'Int64'
+        case 'decimal' -> "Decimal(38, ${column.decimalPlaces as int})"
+        case 'boolean' -> 'Bool'
+        case 'date' -> 'Date32'
+        case 'datetime' -> "DateTime64(3, 'UTC')"
+        default -> throw new IllegalArgumentException('Unbekannter CSV-Datentyp.')
+    }
+    column.mandatory ? type : "Nullable(${type})"
+}
+
 def sha256 = { path ->
     def digest = MessageDigest.getInstance('SHA-256')
     Files.newInputStream(path).withCloseable { bytes ->
@@ -118,6 +134,52 @@ action('deliver') { ctx ->
             acl = 'private'
             contentType = 'text/csv'
         }
+
+        def table = 'snapshot_' + id.toString().replace('-', '')
+        def columns = state.columns.collect { column ->
+            if (!(column.name ==~ /[A-Za-z][A-Za-z0-9_]{0,62}/)) {
+                throw new IllegalArgumentException('Ungültiger CSV-Spaltenname.')
+            }
+            "`${column.name}` ${clickhouseType(column)}"
+        }.join(', ')
+        def ddl = "CREATE TABLE default.${table} (${columns}) ENGINE = MergeTree ORDER BY tuple()"
+        ctx.run(SqlExecutor) {
+            database = 'clickhouse'
+            statements = [[sql: ddl.toString(), parameters: []]]
+        }
+        // The importer sends an empty INSERT for a header-only snapshot.
+        boolean hasRows = Files.newBufferedReader(snapshot).withCloseable { reader ->
+            reader.readLine()
+            reader.read() != -1
+        }
+        if (hasRows) {
+            ctx.run(CsvImport) {
+                database = 'clickhouse'
+                schemaName = 'default'
+                tableName = table
+                dataFile = snapshot
+                firstLineIsHeader = true
+                valueSeparator = ','
+                valueDelimiter = '"'
+                encoding = 'UTF-8'
+            }
+        }
+        def countFile = workPath('count.json')
+        ctx.run(Curl) {
+            serverUrl = parameter('clickhouseUrl')
+            method = 'POST'
+            expectedStatusCode = 200
+            user = parameter('clickhouseUser')
+            password = secret('clickhousePassword')
+            data = "SELECT count() AS objectCount FROM default.${table} FORMAT JSONEachRow"
+            outputFile = countFile
+        }
+        def count = new JsonSlurper().parse(countFile.toFile()).objectCount as long
+        post('complete', authorize(), [
+            schemaId: state.schemaId, baseVersionId: state.baseVersionId,
+            fileName: 'snapshot.csv', byteSize: Files.size(snapshot), sha256: sha256(snapshot),
+            objectCount: count
+        ], null)
     } catch (Exception error) {
         if (!rejected) {
             try {
